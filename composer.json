@@ -1,0 +1,31 @@
+{
+    "name":        "insolita/yii2-codestat" ,
+    "description": "Statistic of code usage inspired by Laravel Stats" ,
+    "type":        "yii2-extension" ,
+    "keywords":    [ "yii2" , "code" , "statistic" ] ,
+    "license":     "MIT" ,
+    "authors":     [
+        {
+            "name":  "insolita" ,
+            "email": "webmaster100500@ya.ru"
+        }
+    ] ,
+    "require":     {
+        "php":           ">=5.6" ,
+        "yiisoft/yii2":  "~2.0.5" ,
+        "phploc/phploc": "^4.0",
+        "dekor/php-array-table": "@dev"
+    } ,
+    "require-dev": {
+        "phpunit/phpunit":    "~6.0" ,
+        "codeception/verify":  "~0.4" ,
+        "codeception/specify": "~0.4.6"
+    } ,
+    "suggest":     { } ,
+    "autoload":    {
+        "psr-4": {
+            "insolita\\codestat\\": "src/",
+            "tests\\":"tests/"
+        }
+    }
+}
