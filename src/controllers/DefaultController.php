@@ -7,11 +7,10 @@ namespace insolita\codestat\controllers;
 
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
+use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
 use yii\helpers\FileHelper;
-use yii\helpers\VarDumper;
-use function compact;
 
 class DefaultController extends Controller
 {
@@ -21,16 +20,29 @@ class DefaultController extends Controller
     public $module;
     
     public $color = true;
- 
+    
+    protected $climate;
+    
+    public function __construct($id, Module $module, CLImate $CLImate, array $config = [])
+    {
+        $this->climate = $CLImate;
+        parent::__construct($id, $module, $config);
+    }
+    
     public function actionIndex()
     {
         $service = $this->module->statService;
         $summary = $service->makeStatistic($this->prepareFiles());
+        foreach ($summary as $name => &$row) {
+            $row = ['name' => $name] + $row;
+        }
         $total = $service->summaryStatistic($summary);
-        //TODO: find yii2 table output
-        //Output::info(VarDumper::dumpAsString(compact('total', 'summary')));
-        Output::arrayToTable($summary);
-        Output::arrayToTable($total);
+        $total = ['name' => 'Total'] + $total;
+        $this->climate->lightGreen()->border('*', 100)
+            ->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic')->lightGreen()
+            ->border('*', 100);
+        $this->climate
+            ->green()->table($summary + [$total]);
     }
     
     public function actionListFiles()

@@ -5,7 +5,6 @@
 
 namespace insolita\codestat\helpers;
 
-use dekor\ArrayToTextTable;
 use yii\helpers\BaseConsole;
 use function str_repeat;
 
@@ -21,10 +20,6 @@ class Output extends BaseConsole
         }
     }
     
-    public static function arrayToTable(array $data)
-    {
-        echo (new ArrayToTextTable($data))->render();
-    }
     
     public static function separator($string = '-', $multiplier = 25)
     {
