@@ -6,7 +6,6 @@
 namespace tests;
 
 use Codeception\Specify;
-use Codeception\Util\Debug;
 use insolita\codestat\lib\classdetect\RegexpDetector;
 use insolita\codestat\lib\CodestatService;
 use insolita\codestat\lib\collection\GroupCollection;
@@ -76,7 +75,6 @@ class CodestatServiceTest extends TestCase
                 }, ARRAY_FILTER_USE_KEY);
                 return $groupMetrics;
             });
-            Debug::debug($result);
             expect($result)->count(2);
             foreach ($result as $name => $statistic) {
                 expect($statistic)->hasKey('methods');
@@ -92,7 +90,6 @@ class CodestatServiceTest extends TestCase
                 new GroupCollection($this->rules())
             );
             $result = $service->makeStatistic($this->files());
-            Debug::debug($result);
         });
     }
     
