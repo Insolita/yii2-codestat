@@ -7,8 +7,8 @@ namespace insolita\codestat\lib;
 
 use insolita\codestat\lib\collection\Group;
 use insolita\codestat\lib\collection\GroupCollection;
-use insolita\codestat\lib\contracts\IClassDetector;
-use insolita\codestat\lib\contracts\ICodestatService;
+use insolita\codestat\lib\contracts\ClassDetectorInterface;
+use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use ReflectionClass;
 use SebastianBergmann\PHPLOC\Analyser;
 use function array_column;
@@ -23,7 +23,7 @@ use function is_null;
 /**
  *
  */
-class CodestatService implements ICodestatService
+class CodestatService implements CodestatServiceInterface
 {
     protected $groups;
     
@@ -32,11 +32,11 @@ class CodestatService implements ICodestatService
     private $withErrors = 0;
     
     /**
-     * @var \insolita\codestat\lib\contracts\IClassDetector
+     * @var \insolita\codestat\lib\contracts\ClassDetectorInterface
      */
     private $classDetector;
     
-    public function __construct(IClassDetector $classDetector, GroupCollection $groups)
+    public function __construct(ClassDetectorInterface $classDetector, GroupCollection $groups)
     {
         $this->groups = $groups;
         $this->classDetector = $classDetector;

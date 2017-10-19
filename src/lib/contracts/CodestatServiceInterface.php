@@ -8,7 +8,7 @@ namespace insolita\codestat\lib\contracts;
 /**
  *
  */
-interface ICodestatService
+interface CodestatServiceInterface
 {
     /**
      * @param array $files

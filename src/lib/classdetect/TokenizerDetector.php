@@ -5,7 +5,7 @@
 
 namespace insolita\codestat\lib\classdetect;
 
-use insolita\codestat\lib\contracts\IClassDetector;
+use insolita\codestat\lib\contracts\ClassDetectorInterface;
 use function is_null;
 use const T_INTERFACE;
 use const T_TRAIT;
@@ -14,7 +14,7 @@ use const T_TRAIT;
  * The Realization honestly copy-pasted
  * from \SebastianBergmann\PHPLOC\Analyser::preProcessFile()
  */
-class TokenizerDetector implements IClassDetector
+class TokenizerDetector implements ClassDetectorInterface
 {
     public function resolveClassName($filePath)
     {

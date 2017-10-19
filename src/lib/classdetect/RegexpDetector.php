@@ -5,10 +5,10 @@
 
 namespace insolita\codestat\lib\classdetect;
 
-use insolita\codestat\lib\contracts\IClassDetector;
+use insolita\codestat\lib\contracts\ClassDetectorInterface;
 use function preg_match;
 
-class RegexpDetector implements IClassDetector
+class RegexpDetector implements ClassDetectorInterface
 {
     /**
      * @param string $filePath

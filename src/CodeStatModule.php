@@ -8,8 +8,8 @@ namespace insolita\codestat;
 use insolita\codestat\lib\classdetect\RegexpDetector;
 use insolita\codestat\lib\CodestatService;
 use insolita\codestat\lib\collection\GroupCollection;
-use insolita\codestat\lib\contracts\IClassDetector;
-use insolita\codestat\lib\contracts\ICodestatService;
+use insolita\codestat\lib\contracts\ClassDetectorInterface;
+use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use Yii;
 use yii\base\Action;
 use yii\base\Behavior;
@@ -25,7 +25,6 @@ use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
 use yii\di\Instance;
 use yii\rest\Controller as RestController;
-use yii\test\Fixture;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
 use function is_array;
@@ -63,7 +62,7 @@ class CodeStatModule extends Module
     /**
      * Custom group analyse function, with input Group, should return array with metric names and values
      *
-     * @see CodestatService::analyse()
+     * @see CodestatServiceInterface::analyse()
      * @example
      * 'analyseCallback = function(Group $group){
      *       $metrics=$customAnalyzer->analyze($group->getFiles());
@@ -74,11 +73,11 @@ class CodeStatModule extends Module
     public $analyseCallback;
     
     /**
-     * @var string|ICodestatService
+     * @var string|CodestatServiceInterface
      */
     public $statService = CodestatService::class;
     /**
-     * @var string|IClassDetector
+     * @var string|ClassDetectorInterface
      */
     public $classDetector = RegexpDetector::class;
     /**
@@ -159,7 +158,7 @@ class CodeStatModule extends Module
     
     protected function prepareService()
     {
-        $this->classDetector = Instance::ensure($this->classDetector, IClassDetector::class);
+        $this->classDetector = Instance::ensure($this->classDetector, ClassDetectorInterface::class);
         $this->statService = Yii::createObject($this->statService, [$this->classDetector, $this->groupRules]);
     }
 }

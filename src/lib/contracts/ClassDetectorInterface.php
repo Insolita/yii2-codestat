@@ -8,7 +8,7 @@ namespace insolita\codestat\lib\contracts;
 /**
  *
  */
-interface IClassDetector
+interface ClassDetectorInterface
 {
     /**
      * Return FQN by full filePath, or null, if not found
