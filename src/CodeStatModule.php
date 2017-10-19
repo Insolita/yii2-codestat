@@ -131,7 +131,7 @@ class CodeStatModule extends Module
             'Widgets' => Widget::class,
             'Components' => Component::class,
             'Objects' => Object::class,
-            'PureClass' => function (\ReflectionClass $reflection) {
+            'PureClass' => function(\ReflectionClass $reflection) {
                 return (
                     !$reflection->getParentClass()
                     && !$reflection->isInterface()
@@ -144,7 +144,7 @@ class CodeStatModule extends Module
     
     protected function prepareScanTargets()
     {
-        $this->scanTargets = array_map(function ($path) {
+        $this->scanTargets = array_map(function($path) {
             return \Yii::getAlias($path);
         }, $this->scanTargets);
     }

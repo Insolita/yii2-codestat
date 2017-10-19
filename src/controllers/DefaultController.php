@@ -64,7 +64,7 @@ class DefaultController extends Controller
                 if ($key === 'Group') {
                     $value = $this->wrap($value, 'yellow');
                 }
-                if ($i == count($summary)-1) {
+                if ($i == count($summary) - 1) {
                     $value = $this->wrap($value, 'light_cyan');
                 }
                 $key = $this->wrap($key, 'green');
@@ -86,7 +86,7 @@ class DefaultController extends Controller
     {
         $files = [];
         foreach ($this->module->scanTargets as $dir) {
-            $files = array_merge( FileHelper::findFiles($dir, [
+            $files = array_merge(FileHelper::findFiles($dir, [
                 'only' => ['*.php'],
                 'except' => $this->module->exceptTargets,
                 'caseSensitive'=>false,
