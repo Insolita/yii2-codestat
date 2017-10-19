@@ -135,7 +135,6 @@ class CodeStatModule extends Module
                     !$reflection->getParentClass()
                     && !$reflection->isInterface()
                     && !$reflection->isAbstract()
-                    && !$reflection->isAnonymous()
                 );
             }
         ];
