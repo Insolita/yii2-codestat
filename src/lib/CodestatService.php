@@ -9,7 +9,6 @@ use insolita\codestat\lib\collection\Group;
 use insolita\codestat\lib\collection\GroupCollection;
 use insolita\codestat\lib\contracts\IClassDetector;
 use insolita\codestat\lib\contracts\ICodestatService;
-use function is_null;
 use ReflectionClass;
 use SebastianBergmann\PHPLOC\Analyser;
 use function array_column;
@@ -19,6 +18,7 @@ use function array_keys;
 use function array_sum;
 use function call_user_func;
 use function in_array;
+use function is_null;
 
 /**
  *
@@ -134,16 +134,30 @@ class CodestatService implements ICodestatService
      */
     protected function analyse(Group $group)
     {
-        $summary = ['class_cnt' => $group->getNumberOfClasses()];
+        $summary = ['Classes' => $group->getNumberOfClasses()];
         if ($group->getNumberOfClasses() > 0) {
             $groupMetrics = (new Analyser())->countFiles($group->getFiles(), false);
             $groupMetrics = array_filter($groupMetrics, function ($key) {
                 return in_array($key, ['methods', 'loc', 'lloc', 'ccn', 'classCcnAvg']);
             }, ARRAY_FILTER_USE_KEY);
-            $summary['methods_per_class'] = round($groupMetrics['methods'] / $group->getNumberOfClasses(), 2);
-            return $summary + $groupMetrics;
+            $summary['Methods'] = $groupMetrics['methods'];
+            $summary['Methods/Class']
+                = round($groupMetrics['methods'] / $group->getNumberOfClasses(), 2);
+            $summary['Lines'] = $groupMetrics['loc'];
+            $summary['LoC'] = $groupMetrics['lloc'];
+            $summary['Complexity'] = $groupMetrics['ccn'];
+            $summary['Class/Complexity avg'] = $groupMetrics['classCcnAvg'];
+            return $summary;
         } else {
-            return $summary + array_fill_keys(['methods_per_class', 'methods', 'loc', 'lloc', 'ccn', 'classCcnAvg'], 0);
+            return $summary +
+                array_fill_keys([
+                    'Methods/Class',
+                    'Methods',
+                    'Lines',
+                    'LoC',
+                    'Complexity',
+                    'Class/Complexity avg',
+                ], 0);
         }
     }
 }

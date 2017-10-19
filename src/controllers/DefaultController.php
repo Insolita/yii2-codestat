@@ -34,15 +34,17 @@ class DefaultController extends Controller
         $service = $this->module->statService;
         $summary = $service->makeStatistic($this->prepareFiles());
         foreach ($summary as $name => &$row) {
-            $row = ['name' => $name] + $row;
+            $row = ['Group' => $name] + $row;
         }
         $total = $service->summaryStatistic($summary);
-        $total = ['name' => 'Total'] + $total;
-        $this->climate->lightGreen()->border('*', 100)
-            ->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic')->lightGreen()
-            ->border('*', 100);
-        $this->climate
-            ->green()->table($summary + [$total]);
+        $total = ['Group' => 'Total'] + $total;
+        $summary = $summary + [$total];
+        if ($this->color) {
+            $summary = $this->colorize(array_values($summary));
+        }
+        $this->climate->green()->border('=', 110)
+            ->tab()->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic');
+        $this->climate->table($summary);
     }
     
     public function actionListFiles()
@@ -52,6 +54,29 @@ class DefaultController extends Controller
         Output::arrayList($files);
         Output::separator();
         Output::info('Total: ' . count($files));
+    }
+    
+    protected function colorize(array $summary)
+    {
+        $colorized = [];
+        foreach ($summary as $i => $row) {
+            foreach ($row as $key => $value) {
+                if ($key === 'Group') {
+                    $value = $this->wrap($value, 'yellow');
+                }
+                if ($i == count($summary)-1) {
+                    $value = $this->wrap($value, 'light_cyan');
+                }
+                $key = $this->wrap($key, 'green');
+                $colorized[$i][$key] = $value;
+            }
+        }
+        return $colorized;
+    }
+    
+    protected function wrap($string, $color)
+    {
+        return "<bold><$color>$string</$color></bold>";
     }
     
     /**
