@@ -39,8 +39,8 @@ class CodestatServiceTest extends TestCase
             foreach ($result as $name => $statistic) {
                 expect($statistic)->hasKey('Classes');
             }
-            expect($result['a']['class_cnt'])->equals(2);
-            expect($result['b']['class_cnt'])->equals(1);
+            expect($result['a']['Classes'])->equals(2);
+            expect($result['b']['Classes'])->equals(1);
         });
         $this->specify('test with not matched files', function () {
             $service = new CodestatService(
