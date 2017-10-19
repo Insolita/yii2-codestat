@@ -10,6 +10,10 @@ use function is_null;
 use const T_INTERFACE;
 use const T_TRAIT;
 
+/**
+ * The Realization honestly copy-pasted
+ * from \SebastianBergmann\PHPLOC\Analyser::preProcessFile()
+ */
 class TokenizerDetector implements IClassDetector
 {
     public function resolveClassName($filePath)

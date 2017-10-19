@@ -37,13 +37,7 @@ class CodestatServiceTest extends TestCase
             expect($result)->hasKey('a');
             expect($result)->hasKey('b');
             foreach ($result as $name => $statistic) {
-                expect($statistic)->hasKey('class_cnt');
-                expect($statistic)->hasKey('methods');
-                expect($statistic)->hasKey('methods_per_class');
-                expect($statistic)->hasKey('loc');
-                expect($statistic)->hasKey('lloc');
-                expect($statistic)->hasKey('ccn');
-                expect($statistic)->hasKey('classCcnAvg');
+                expect($statistic)->hasKey('Classes');
             }
             expect($result['a']['class_cnt'])->equals(2);
             expect($result['b']['class_cnt'])->equals(1);
@@ -55,7 +49,9 @@ class CodestatServiceTest extends TestCase
             );
             $result = $service->makeStatistic($this->files());
             expect($result)->count(1);
-            foreach (['class_cnt', 'methods_per_class', 'methods', 'loc', 'lloc', 'ccn', 'classCcnAvg'] as $key) {
+            foreach (
+                ['Classes', 'Methods/Class', 'Methods', 'Lines', 'LoC', 'Complexity', 'Class/Complexity avg'] as $key
+            ) {
                 expect($result['u'][$key])->equals(0);
             }
         });
@@ -63,10 +59,11 @@ class CodestatServiceTest extends TestCase
             $service = new CodestatService(
                 new RegexpDetector(),
                 new GroupCollection([
-                'objects' => Object::class,
-                'nonObjects' => function (\ReflectionClass $reflection) {
-                    return !$reflection->isSubclassOf(Object::class);
-                }])
+                    'objects' => Object::class,
+                    'nonObjects' => function (\ReflectionClass $reflection) {
+                        return !$reflection->isSubclassOf(Object::class);
+                    },
+                ])
             );
             $result = $service->makeStatistic($this->files(), function ($group) {
                 $groupMetrics = (new Analyser())->countFiles($group->getFiles(), false);
