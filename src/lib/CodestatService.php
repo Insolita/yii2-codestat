@@ -36,7 +36,7 @@ class CodestatService implements CodestatServiceInterface
     
     /**
      * @param array $files
-     * @param null  $analyseCallback
+     * @param callable|null  $analyseCallback
      *
      * @return array
      */
