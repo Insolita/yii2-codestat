@@ -6,8 +6,6 @@
 namespace insolita\codestat\lib\classdetect;
 
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
-use const T_INTERFACE;
-use const T_TRAIT;
 
 /**
  * The Realization honestly copy-pasted
@@ -29,26 +27,26 @@ class TokenizerDetector implements ClassDetectorInterface
      * @param array $tokens
      * @param int   $i
      *
-     * @return string|null
+     * @return string|false
      */
     protected function getNamespaceName(array $tokens, $i)
     {
-        $namespace = null;
         if (isset($tokens[$i + 2][1])) {
             $namespace = $tokens[$i + 2][1];
-            for ($j = $i + 3; ; $j += 2) {
+            for ($j = $i + 3;; $j += 2) {
                 if (isset($tokens[$j]) && $tokens[$j][0] == T_NS_SEPARATOR) {
                     $namespace .= '\\' . $tokens[$j + 1][1];
                 } else {
                     break;
                 }
             }
+            return $namespace;
         }
-        return $namespace;
+        return false;
     }
     
     /**
-     * @param string|null $namespace
+     * @param string|false $namespace
      * @param array  $tokens
      * @param int    $i
      *
@@ -64,11 +62,11 @@ class TokenizerDetector implements ClassDetectorInterface
         
         $namespaced = $className === '\\';
         
-        while (\is_array($tokens[$i + 1]) && $tokens[$i + 1][0] !== T_WHITESPACE) {
+        while (is_array($tokens[$i + 1]) && $tokens[$i + 1][0] !== T_WHITESPACE) {
             $className .= $tokens[++$i][1];
         }
         
-        if (!$namespaced && $namespace !== null) {
+        if (!$namespaced && $namespace !== false) {
             $className = $namespace . '\\' . $className;
         }
         
@@ -85,13 +83,13 @@ class TokenizerDetector implements ClassDetectorInterface
      */
     protected function processFile($filename)
     {
-        $tokens = \token_get_all(\file_get_contents($filename));
-        $numTokens = \count($tokens);
+        $tokens = token_get_all(file_get_contents($filename));
+        $numTokens = count($tokens);
         $namespace = null;
         $className = null;
         
         for ($i = 0; $i < $numTokens; $i++) {
-            if (\is_string($tokens[$i])) {
+            if (is_string($tokens[$i])) {
                 continue;
             }
             
@@ -145,7 +143,7 @@ class TokenizerDetector implements ClassDetectorInterface
         $n = $this->getPreviousNonWhitespaceTokenPos($tokens, $i);
         
         return !isset($tokens[$n])
-            || !\is_array($tokens[$n])
-            || !\in_array($tokens[$n][0], [T_DOUBLE_COLON, T_NEW], true);
+            || !is_array($tokens[$n])
+            || !in_array($tokens[$n][0], [T_DOUBLE_COLON, T_NEW], true);
     }
 }
