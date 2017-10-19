@@ -86,12 +86,12 @@ class DefaultController extends Controller
     {
         $files = [];
         foreach ($this->module->scanTargets as $dir) {
-            $files += FileHelper::findFiles($dir, [
+            $files = array_merge( FileHelper::findFiles($dir, [
                 'only' => ['*.php'],
                 'except' => $this->module->exceptTargets,
-                'recursive' =>
-                    true,
-            ]);
+                'caseSensitive'=>false,
+                'recursive' => true
+            ]), $files);
         }
         return $files;
     }
