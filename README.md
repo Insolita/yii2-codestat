@@ -2,6 +2,8 @@ Yii2 Code Statistic
 ===================
 [![Build Status](https://travis-ci.org/Insolita/yii2-codestat.svg?branch=master)](https://travis-ci.org/Insolita/yii2-codestat)
 
+![screenshot](codestat.png)
+
 Installation
 ============
 Either run
@@ -50,15 +52,16 @@ For statistic output run
 Advanced Usage
 --------------
 
-###Custom Class Grouping Rules
+#### Custom Class Grouping Rules
+
 You can extend or overwrite property 'groupRules', with supported formats
 `'Group Name' => 'BaseParentClass'`
  where 'BaseParentClass' should by verified with (\ReflectionClass)->isSubclassOf();
 or
 ```
 'Group Name' => function(\ReflectionClass $reflection){
-      //Should return true if class valid for this group, otherwise false;
-       }
+                     //Should return true if class valid for this group, otherwise false;
+                }
 ```
 Final example
 
@@ -85,7 +88,8 @@ php
 ```
 **Important!** The order of the rules in the list matters, the base classes (\yii\base\Component and \yii\base\Object) should be at the end of the list!
 
-###Custom code metrics
+### Custom code metrics
+
 Code metrics provided by [https://github.com/sebastianbergmann/phploc](https://github.com/sebastianbergmann/phploc),  has lot of variants, you can define own combination, or also use another package;
 set property 'analyseCallback' in module like as
 ```php
