@@ -6,7 +6,6 @@
 namespace insolita\codestat\lib\classdetect;
 
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
-use function is_null;
 use const T_INTERFACE;
 use const T_TRAIT;
 
@@ -19,7 +18,7 @@ class TokenizerDetector implements ClassDetectorInterface
     public function resolveClassName($filePath)
     {
         $className = $this->processFile($filePath);
-        if (is_null($className)) {
+        if (\is_null($className)) {
             return null;
         } else {
             return $className;
@@ -30,10 +29,11 @@ class TokenizerDetector implements ClassDetectorInterface
      * @param array $tokens
      * @param int   $i
      *
-     * @return string
+     * @return string|null
      */
     protected function getNamespaceName(array $tokens, $i)
     {
+        $namespace = null;
         if (isset($tokens[$i + 2][1])) {
             $namespace = $tokens[$i + 2][1];
             for ($j = $i + 3; ; $j += 2) {
@@ -43,13 +43,12 @@ class TokenizerDetector implements ClassDetectorInterface
                     break;
                 }
             }
-            return $namespace;
         }
-        return false;
+        return $namespace;
     }
     
     /**
-     * @param string $namespace
+     * @param string|null $namespace
      * @param array  $tokens
      * @param int    $i
      *
@@ -69,7 +68,7 @@ class TokenizerDetector implements ClassDetectorInterface
             $className .= $tokens[++$i][1];
         }
         
-        if (!$namespaced && $namespace !== false) {
+        if (!$namespaced && $namespace !== null) {
             $className = $namespace . '\\' . $className;
         }
         

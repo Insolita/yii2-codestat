@@ -5,11 +5,6 @@
 
 namespace insolita\codestat\lib\collection;
 
-use function array_map;
-use function array_walk;
-use InvalidArgumentException;
-use function is_string;
-
 class GroupCollection extends BaseCollection
 {
     /**@var Group[] $items * */

@@ -6,7 +6,6 @@
 namespace insolita\codestat\lib\classdetect;
 
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
-use function preg_match;
 
 class RegexpDetector implements ClassDetectorInterface
 {
@@ -19,7 +18,7 @@ class RegexpDetector implements ClassDetectorInterface
     {
         $content = file_get_contents($filePath);
         $className = $this->extractClass($content);
-        if ($className) {
+        if ($className !== null) {
             $namespace = $this->extractNamespace($content);
             return $namespace . '\\' . $className;
         } else {

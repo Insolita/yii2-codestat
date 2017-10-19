@@ -11,14 +11,6 @@ use insolita\codestat\lib\contracts\ClassDetectorInterface;
 use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use ReflectionClass;
 use SebastianBergmann\PHPLOC\Analyser;
-use function array_column;
-use function array_fill_keys;
-use function array_filter;
-use function array_keys;
-use function array_sum;
-use function call_user_func;
-use function in_array;
-use function is_null;
 
 /**
  *

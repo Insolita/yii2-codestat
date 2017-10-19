@@ -6,7 +6,6 @@
 namespace insolita\codestat\helpers;
 
 use yii\helpers\BaseConsole;
-use function str_repeat;
 
 class Output extends BaseConsole
 {

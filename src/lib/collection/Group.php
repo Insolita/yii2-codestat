@@ -5,12 +5,6 @@
 
 namespace insolita\codestat\lib\collection;
 
-use function call_user_func;
-use function count;
-use function in_array;
-use function is_callable;
-use function is_string;
-
 class Group
 {
     /**

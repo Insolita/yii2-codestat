@@ -1,6 +1,7 @@
 Yii2 Code Statistic
 ===================
 [![Build Status](https://travis-ci.org/Insolita/yii2-codestat.svg?branch=master)](https://travis-ci.org/Insolita/yii2-codestat)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/a2b84a39-bbae-4330-ae75-d464111f98ac/small.png)](https://insight.sensiolabs.com/projects/a2b84a39-bbae-4330-ae75-d464111f98ac)
 
 ![screenshot](codestat.png)
 

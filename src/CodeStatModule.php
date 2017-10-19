@@ -27,7 +27,6 @@ use yii\di\Instance;
 use yii\rest\Controller as RestController;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
-use function is_array;
 
 /**
  *
