@@ -34,8 +34,8 @@ php
 
 ```
 
- *scanTargets*   - array of path, or path aliases that will be scanned recursively
- *exceptTargets* - array of path patterns for excluding
+ **scanTargets**   - array of path, or path aliases that will be scanned recursively
+ **exceptTargets** - array of path patterns for excluding
 
 For checking whole list of files that will be processed, run
 ```
@@ -51,5 +51,52 @@ Advanced Usage
 --------------
 
 ###Custom Class Grouping Rules
+You can extend or overwrite property 'groupRules', with supported formats
+`'Group Name' => 'BaseParentClass'`
+ where 'BaseParentClass' should by verified with (\ReflectionClass)->isSubclassOf();
+or
+```
+'Group Name' => function(\ReflectionClass $reflection){
+      //Should return true if class valid for this group, otherwise false;
+       }
+```
+Final example
+
+```
+php
+'modules'=>[
+ ....
+        'codestat'=>[
+            'class'=>CodeStatModule::class,
+             'groupRules' => [
+                                'Jobs' => 'yii\queue\JobInterface',
+                                'Handlers' => 'trntv\bus\interfaces\Handler::class',
+                                'DTO' => function (\ReflectionClass $reflection) {
+                                     return mb_strpos($reflection->getFileName(), 'Dto')!==false;
+                                },
+                                'All Tests' => function (\ReflectionClass $reflection) {
+                                    return $reflection->isSubclassOf('\Codeception\Test\Unit')
+                                        || StringHelper::endsWith($reflection->getName(), 'Cest');
+                                },
+                            ] + CodeStatModule::defaultRules(),
+                    ],
+        ]
+    ],
+```
+**Important!** The order of the rules in the list matters, the base classes (\yii\base\Component and \yii\base\Object) should be at the end of the list!
+
+###Custom code metrics
+Code metrics provided by [https://github.com/sebastianbergmann/phploc](https://github.com/sebastianbergmann/phploc),  has lot of variants, you can define own combination, or also use another package;
+set property 'analyseCallback' in module like as
+```php
+    'analyseCallback = function($group){
+               /**@var insolita\codestat\lib\collection\Group $group **/
+               $metrics=$customAnalyzer->analyze($group->getFiles());
+               return ['totalFiles'=>count($group->getFiles()), 'metric1'=>$metrics[some], ...etc];
+     }
+```
+It should return associative array with `'metric name' => 'metric value'` data and will be replacement for https://github.com/Insolita/yii2-codestat/blob/7d0fc3351718b2052624ea091ff8f154fe471aeb/src/lib/CodestatService.php#L154
+
+And also table summary convention - if metric name contains slash "/", for summary row will be counted average value, otherwise sum
 
 

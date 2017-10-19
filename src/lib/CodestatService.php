@@ -162,7 +162,7 @@ class CodestatService implements ICodestatService
             $summary['Lines'] = $groupMetrics['loc'];
             $summary['LoC'] = $groupMetrics['lloc'];
             $summary['LoC/Method'] = $groupMetrics['methods'] > 0
-                ? round($groupMetrics['loc'] / $groupMetrics['methods'], 2)
+                ? round($groupMetrics['lloc'] / $groupMetrics['methods'], 2)
                 : 0;
             $summary['Complexity'] = $groupMetrics['ccn'];
             $summary['Class/Complexity avg'] = round($groupMetrics['classCcnAvg'], 4);
