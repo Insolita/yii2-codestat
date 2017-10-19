@@ -24,6 +24,7 @@ use yii\console\Controller as ConsoleController;
 use yii\db\BaseActiveRecord;
 use yii\di\Instance;
 use yii\rest\Controller as RestController;
+use yii\test\Fixture;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
 use function is_array;
@@ -103,7 +104,7 @@ class CodeStatModule extends Module
             throw new InvalidConfigException('scanTargets can`t be empty');
         }
         if (empty($this->groupRules)) {
-            $this->groupRules = $this->defaultRules();
+            $this->groupRules = self::defaultRules();
         }
         if (!is_array($this->scanTargets) || !is_array($this->exceptTargets)) {
             throw new InvalidConfigException('scanTargets and exceptTargets must be array');
@@ -113,7 +114,7 @@ class CodeStatModule extends Module
         }
     }
     
-    protected function defaultRules()
+    public static function defaultRules()
     {
         return [
             'Actions' => Action::class,
@@ -124,12 +125,8 @@ class CodeStatModule extends Module
             'RestControllers' => RestController::class,
             'WebControllers' => WebController::class,
             'Events' => Event::class,
-            'Models' => function (\ReflectionClass $reflection) {
-                return (
-                    $reflection->getParentClass() &&
-                    $reflection->getParentClass()->name === Model::class
-                );
-            },
+            'Fixtures'=> Fixture::class,
+            'Models' => Model::class,
             'Modules' => Module::class,
             'Widgets' => Widget::class,
             'Components' => Component::class,
