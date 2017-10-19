@@ -64,6 +64,11 @@ class CodestatService implements ICodestatService
         return $statistic;
     }
     
+    /**
+     * @param array $statistic
+     *
+     * @return array|mixed
+     */
     public function summaryStatistic(array $statistic)
     {
         $result = [];
@@ -74,7 +79,11 @@ class CodestatService implements ICodestatService
             } else {
                 $firstKeys = array_keys($firstRow);
                 foreach ($firstKeys as $key) {
-                    $result[$key] = array_sum(array_column($statistic, $key));
+                    if (mb_strpos($key, '/') !== false) {
+                        $result[$key] = $this->columnAvg(array_column($statistic, $key));
+                    } else {
+                        $result[$key] = array_sum(array_column($statistic, $key));
+                    }
                 }
             }
         }
@@ -109,6 +118,16 @@ class CodestatService implements ICodestatService
     }
     
     /**
+     * @param array $column
+     *
+     * @return float|int
+     */
+    protected function columnAvg(array $column)
+    {
+        return count($column) > 0 ? round(array_sum($column) / count($column), 2) : 0;
+    }
+    
+    /**
      * @param \Generator $classGen
      *
      * @return \Generator|\ReflectionClass[]
@@ -134,27 +153,28 @@ class CodestatService implements ICodestatService
      */
     protected function analyse(Group $group)
     {
-        $summary = ['Classes' => $group->getNumberOfClasses()];
+        $summary = [];
         if ($group->getNumberOfClasses() > 0) {
             $groupMetrics = (new Analyser())->countFiles($group->getFiles(), false);
-            $groupMetrics = array_filter($groupMetrics, function ($key) {
-                return in_array($key, ['methods', 'loc', 'lloc', 'ccn', 'classCcnAvg']);
-            }, ARRAY_FILTER_USE_KEY);
+            $summary['Classes'] = $groupMetrics['classes'];
             $summary['Methods'] = $groupMetrics['methods'];
-            $summary['Methods/Class']
-                = round($groupMetrics['methods'] / $group->getNumberOfClasses(), 2);
+            $summary['Methods/Class'] = round($groupMetrics['methods'] / $groupMetrics['classes'], 2);
             $summary['Lines'] = $groupMetrics['loc'];
             $summary['LoC'] = $groupMetrics['lloc'];
+            $summary['LoC/Method'] = $groupMetrics['methods'] > 0
+                ? round($groupMetrics['loc'] / $groupMetrics['methods'], 2)
+                : 0;
             $summary['Complexity'] = $groupMetrics['ccn'];
-            $summary['Class/Complexity avg'] = $groupMetrics['classCcnAvg'];
+            $summary['Class/Complexity avg'] = round($groupMetrics['classCcnAvg'], 4);
             return $summary;
         } else {
-            return $summary +
-                array_fill_keys([
+            return $summary + array_fill_keys([
+                    'Classes',
                     'Methods/Class',
                     'Methods',
                     'Lines',
                     'LoC',
+                    'LoC/Method',
                     'Complexity',
                     'Class/Complexity avg',
                 ], 0);

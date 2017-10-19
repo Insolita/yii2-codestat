@@ -21,6 +21,7 @@ use yii\base\Module;
 use yii\base\Object;
 use yii\base\Widget;
 use yii\console\Controller as ConsoleController;
+use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
 use yii\di\Instance;
 use yii\rest\Controller as RestController;
@@ -118,6 +119,7 @@ class CodeStatModule extends Module
     {
         return [
             'Actions' => Action::class,
+            'ActiveQuery'=>ActiveQuery::class,
             'ActiveRecords' => BaseActiveRecord::class,
             'AssetBundles' => AssetBundle::class,
             'Behaviors' => Behavior::class,
@@ -125,7 +127,6 @@ class CodeStatModule extends Module
             'RestControllers' => RestController::class,
             'WebControllers' => WebController::class,
             'Events' => Event::class,
-            'Fixtures'=> Fixture::class,
             'Models' => Model::class,
             'Modules' => Module::class,
             'Widgets' => Widget::class,

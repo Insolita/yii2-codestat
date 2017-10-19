@@ -49,9 +49,16 @@ class CodestatServiceTest extends TestCase
             );
             $result = $service->makeStatistic($this->files());
             expect($result)->count(1);
-            foreach (
-                ['Classes', 'Methods/Class', 'Methods', 'Lines', 'LoC', 'Complexity', 'Class/Complexity avg'] as $key
-            ) {
+            foreach ([
+                    'Classes',
+                    'Methods/Class',
+                    'Methods',
+                    'Lines',
+                    'LoC',
+                    'LoC/Method',
+                    'Complexity',
+                    'Class/Complexity avg',
+                ] as $key) {
                 expect($result['u'][$key])->equals(0);
             }
         });
@@ -112,6 +119,12 @@ class CodestatServiceTest extends TestCase
                 ],
                 'expect' => ['a' => 1, 'b' => 2, 'c' => 3],
             ],
+            'on oneRow with avg' => [
+                'summary' => [
+                    'one' => ['a' => 1, 'a/b' => 2, 'c' => 3],
+                ],
+                'expect' => ['a' => 1, 'a/b' => 2, 'c' => 3],
+            ],
             'on full' => [
                 'summary' => [
                     'one' => ['a' => 1, 'b' => 0.2, 'c' => 3],
@@ -119,6 +132,14 @@ class CodestatServiceTest extends TestCase
                     'three' => ['a' => 3, 'b' => 0.4, 'c' => 5],
                 ],
                 'expect' => ['a' => 6, 'b' => 0.9, 'c' => 12],
+            ],
+            'on full  with avg' => [
+                'summary' => [
+                    'one' => ['a' => 1, 'a/b' => 0.2, 'c' => 3],
+                    'two' => ['a' => 2, 'a/b' => 0.3, 'c' => 4],
+                    'three' => ['a' => 3, 'a/b' => 0.4, 'c' => 5],
+                ],
+                'expect' => ['a' => 6, 'a/b' => round(array_sum([0.2, 0.3, 0.4])/3, 2), 'c' => 12],
             ],
         ];
     }
