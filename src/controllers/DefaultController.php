@@ -5,11 +5,14 @@
 
 namespace insolita\codestat\controllers;
 
+use function array_keys;
+use function array_values;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
-use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
+use yii\console\widgets\Table;
+use yii\helpers\Console;
 use yii\helpers\FileHelper;
 
 class DefaultController extends Controller
@@ -20,14 +23,6 @@ class DefaultController extends Controller
     public $module;
     
     public $color = true;
-    
-    protected $climate;
-    
-    public function __construct($id, Module $module, CLImate $CLImate, array $config = [])
-    {
-        $this->climate = $CLImate;
-        parent::__construct($id, $module, $config);
-    }
     
     public function actionIndex()
     {
@@ -42,9 +37,9 @@ class DefaultController extends Controller
         if ($this->color) {
             $summary = $this->colorize(array_values($summary));
         }
-        $this->climate->green()->border('=', 110)
-            ->tab()->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic');
-        $this->climate->table($summary);
+        $this->stdout(Console::wrapText('YII-2 Code Statistic', 5), Console::FG_YELLOW, Console::FRAMED);
+        $table = new Table();
+        echo $table->setHeaders(array_keys($summary))->setRows(array_values($summary))->run();
     }
     
     public function actionListFiles()

@@ -5,6 +5,7 @@
 
 namespace tests;
 
+use Codeception\AssertThrows;
 use Codeception\Specify;
 use function expect_not;
 use function expect_that;
@@ -27,6 +28,7 @@ use tests\stub\two\StubFinal;
 use tests\stub\two\StubImpl;
 use tests\stub\two\StubInterface;
 use yii\base\Action;
+use yii\base\BaseObject;
 use yii\base\Behavior;
 use yii\base\BootstrapInterface;
 use yii\base\Component;
@@ -34,40 +36,43 @@ use yii\base\Controller;
 use yii\base\Event;
 use yii\base\Model;
 use yii\web\Controller as WebController;
-use yii\base\Object;
 use function expect;
 use yii\base\Widget;
 
 class GroupTest extends \PHPUnit\Framework\TestCase
 {
     use Specify;
+    use AssertThrows;
     
     public function testInitial()
     {
-        $this->specify('valid initial values', function () {
-            $group = new Group('my', Object::class);
+        $this->should('be created ', function () {
+            $group = new Group('my', BaseObject::class);
             expect($group->getName())->equals('my');
             expect($group->getFiles())->isEmpty();
             expect($group->getNumberOfClasses())->equals(0);
         });
-        $this->specify('bad calls1', function () {
-            new Group('my', null);
-        }, ['throws' => InvalidArgumentException::class]);
-        $this->specify('bad calls2', function () {
-            new Group('my', []);
-        }, ['throws' => InvalidArgumentException::class]);
-        $this->specify('bad calls3', function () {
-            new Group(null, InvalidArgumentException::class);
-        }, ['throws' => InvalidArgumentException::class]);
-        $this->specify('bad calls4', function () {
-            new Group('', InvalidArgumentException::class);
-        }, ['throws' => InvalidArgumentException::class]);
+        
+        $this->should('throw exceptions on wrong initialization', function () {
+            $this->assertThrows(InvalidArgumentException::class, function () {
+                new Group('my', null);
+            });
+            $this->assertThrows(InvalidArgumentException::class, function () {
+                new Group('my', []);
+            });
+            $this->assertThrows(InvalidArgumentException::class, function () {
+                new Group(null, Widget::class);
+            });
+            $this->assertThrows(InvalidArgumentException::class, function () {
+                new Group('', Widget::class);
+            });
+        });
     }
     
     public function testAddFiles()
     {
-        $this->specify('add different files', function () {
-            $group = new Group('my', Object::class);
+        $this->should('add different files', function () {
+            $group = new Group('my', BaseObject::class);
             $group->addFile(__DIR__ . '/stub/one/StubModel.php');
             $group->addFile(__DIR__ . '/stub/one/StubEvent.php');
             expect($group->getFiles())->count(2);
@@ -77,8 +82,8 @@ class GroupTest extends \PHPUnit\Framework\TestCase
                 __DIR__ . '/stub/one/StubEvent.php',
             ]);
         });
-        $this->specify('add same files, uniqueness verified', function () {
-            $group = new Group('my', Object::class);
+        $this->should('prevent duplication of same files', function () {
+            $group = new Group('my', BaseObject::class);
             $group->addFile(__DIR__ . '/stub/one/StubModel.php');
             $group->addFile(__DIR__ . '/stub/one/StubModel.php');
             expect($group->getFiles())->count(1);
@@ -92,17 +97,17 @@ class GroupTest extends \PHPUnit\Framework\TestCase
     public function testValidation()
     {
         $this->specify('Yii class', function () {
-            $group = new Group('my', Object::class);
-            expect('same class', $group->validate(new ReflectionClass(Object::class)))->false();
+            $group = new Group('my', BaseObject::class);
+            expect('same class', $group->validate(new ReflectionClass(BaseObject::class)))->false();
             expect('inherited class', $group->validate(new ReflectionClass(StubAction::class)))->true();
             expect('std class', $group->validate(new ReflectionClass(StubImpl::class)))->false();
             expect('final class', $group->validate(new ReflectionClass(StubFinal::class)))->true();
         });
         $this->specify('closure rule', function () {
             $group = new Group('my', function (\ReflectionClass $reflection) {
-                return $reflection->isSubclassOf(Object::class);
+                return $reflection->isSubclassOf(BaseObject::class);
             });
-            expect('same class', $group->validate(new ReflectionClass(Object::class)))->false();
+            expect('same class', $group->validate(new ReflectionClass(BaseObject::class)))->false();
             expect('inherited class', $group->validate(new ReflectionClass(StubAction::class)))->true();
             expect('std class', $group->validate(new ReflectionClass(StubImpl::class)))->false();
             expect('final class', $group->validate(new ReflectionClass(StubFinal::class)))->true();

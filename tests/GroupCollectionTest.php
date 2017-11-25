@@ -5,6 +5,7 @@
 
 namespace tests;
 
+use Codeception\AssertThrows;
 use Codeception\Specify;
 use insolita\codestat\lib\collection\GroupCollection;
 use InvalidArgumentException;
@@ -20,27 +21,30 @@ use function array_keys;
 use function expect;
 use function expect_that;
 use function in_array;
-use yii\base\Object;
+use yii\base\BaseObject;
 
 class GroupCollectionTest extends \PHPUnit\Framework\TestCase
 {
-    use StubTrait;
     use Specify;
+    use AssertThrows;
+    use StubTrait;
     
     public function testInit()
     {
-        $this->specify('success scenario', function () {
+        $this->should(' be successfully created', function () {
             $collection = new GroupCollection($this->rules());
             expect($collection->count())->equals(count($this->rules()));
             foreach ($collection as $group) {
                 expect_that(in_array($group->getName(), array_keys($this->rules())));
             }
         });
-        foreach ($this->failRules() as $i => $failRule) {
-            $this->specify('fail scenario #' . $i, function () use ($failRule) {
+        $this->should('throw exception', function ($failRule) {
+            $this->assertThrows(InvalidArgumentException::class, function () use ($failRule) {
                 new GroupCollection($failRule);
-            }, ['throws' => InvalidArgumentException::class]);
-        }
+            });
+        }, [
+            'examples' => [$this->failRules()],
+        ]);
     }
     
     public function testFill()
@@ -62,12 +66,12 @@ class GroupCollectionTest extends \PHPUnit\Framework\TestCase
         });
         
         $this->specify('rule order is important', function () {
-            $collection = new GroupCollection(['a' => Object::class, 'b' => Component::class]);
+            $collection = new GroupCollection(['a' => BaseObject::class, 'b' => Component::class]);
             $collection->fill(new ReflectionClass(StubModule::class));
             expect($collection['a']->getFiles())->contains(__DIR__ . '/stub/one/StubModule.php');
             expect($collection['b']->getFiles())->notContains(__DIR__ . '/stub/one/StubModule.php');
-    
-            $collection = new GroupCollection(['a' => Component::class, 'b' => Object::class]);
+            
+            $collection = new GroupCollection(['a' => Component::class, 'b' => BaseObject::class]);
             $collection->fill(new ReflectionClass(StubModule::class));
             expect($collection['a']->getFiles())->contains(__DIR__ . '/stub/one/StubModule.php');
             expect($collection['b']->getFiles())->notContains(__DIR__ . '/stub/one/StubModule.php');

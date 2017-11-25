@@ -13,14 +13,20 @@
     "require":     {
         "php":           ">=5.6" ,
         "yiisoft/yii2":  "~2.0.13" ,
-        "phploc/phploc": "^4.0",
-        "league/climate": "^3.2"
+        "phploc/phploc": "^4.0"
     } ,
     "require-dev": {
         "phpunit/phpunit":    "~6.0" ,
         "codeception/verify":  "~1.0.0" ,
-        "codeception/specify": "~1.0"
+        "codeception/specify": "~1.0",
+        "codeception/assert-throws": "dev-master"
     } ,
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/Codeception/AssertThrows.git"
+        }
+    ],
     "suggest":     { } ,
     "autoload":    {
         "psr-4": {

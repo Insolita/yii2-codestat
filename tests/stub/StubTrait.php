@@ -6,6 +6,7 @@
 namespace tests\stub;
 
 use yii\base\Action;
+use yii\base\BaseObject;
 use yii\base\Behavior;
 use yii\base\Component;
 use yii\base\Event;
@@ -64,6 +65,7 @@ trait StubTrait
             'Widgets' => Widget::class,
             'Components' => Component::class,
             'Objects' => Object::class,
+            'BaseObjects' => BaseObject::class,
             'PureClass' => function (\ReflectionClass $reflection) {
                 return (
                     !$reflection->getParentClass()
