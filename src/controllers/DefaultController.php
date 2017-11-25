@@ -5,16 +5,11 @@
 
 namespace insolita\codestat\controllers;
 
-use function array_keys;
-use function array_values;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
-use const PHP_EOL;
-use function str_repeat;
+use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
-use yii\console\widgets\Table;
-use yii\helpers\Console;
 use yii\helpers\FileHelper;
 
 class DefaultController extends Controller
@@ -26,6 +21,14 @@ class DefaultController extends Controller
     
     public $color = true;
     
+    protected $climate;
+    
+    public function __construct($id, Module $module, CLImate $CLImate, array $config = [])
+    {
+        $this->climate = $CLImate;
+        parent::__construct($id, $module, $config);
+    }
+    
     public function actionIndex()
     {
         $service = $this->module->statService;
@@ -35,18 +38,13 @@ class DefaultController extends Controller
         }
         $total = $service->summaryStatistic($summary);
         $total = ['Group' => 'Total'] + $total;
-        $headers = array_keys($total);
         $summary = $summary + [$total];
-        foreach ($summary as $name => &$row) {
-            $row = array_values($row);
-        }
         if ($this->color) {
             $summary = $this->colorize(array_values($summary));
         }
-        $this->headline('YII-2 Code Statistic', Console::FG_YELLOW);
-        $table = new Table();
-        echo $table->setHeaders($headers)->setRows($summary)->run();
-       // echo $table->setHeaders(array_keys($total))->setRows([array_values($total)])->run();
+        $this->climate->green()->border('=', 110)
+            ->tab()->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic');
+        $this->climate->table($summary);
     }
     
     public function actionListFiles()
@@ -63,13 +61,14 @@ class DefaultController extends Controller
         $colorized = [];
         foreach ($summary as $i => $row) {
             foreach ($row as $key => $value) {
-                if ($key === 0) {
-                    $value = $this->wrap($value, Console::FG_YELLOW);
+                if ($key === 'Group') {
+                    $value = $this->wrap($value, 'yellow');
                 }
                 if ($i == count($summary) - 1) {
-                    $value = $this->wrap($value, Console::FG_CYAN);
+                    $value = $this->wrap($value, 'light_cyan');
                 }
-                $colorized[$i][$key] = $value;
+                $key = $this->wrap($key, 'green');
+                $colorized[$i][$key] = (string)$value;
             }
         }
         return $colorized;
@@ -77,18 +76,7 @@ class DefaultController extends Controller
     
     protected function wrap($string, $color)
     {
-        return Console::ansiFormat($string, [Console::BOLD, $color]);
-    }
-    
-    protected function headline($string, $color)
-    {
-        list($width) = Console::getScreenSize();
-        $width = $width? $width-6:100;
-        $string = $this->wrap($string, $color);
-        $stringWidth = mb_strwidth($string, \Yii::$app->charset);
-        $stringIndent = ($stringWidth<=3||$stringWidth>=$width)?0:round(($width - $stringWidth)/3);
-        echo str_repeat('=', $width).PHP_EOL;
-        echo str_repeat(' ', $stringIndent).$this->wrap($string, $color).PHP_EOL;
+        return "<bold><$color>$string</$color></bold>";
     }
     
     /**
