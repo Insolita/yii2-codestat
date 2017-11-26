@@ -8,9 +8,13 @@ namespace insolita\codestat\controllers;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
 use League\CLImate\CLImate;
+use function str_repeat;
+use Yii;
 use yii\base\Module;
 use yii\console\Controller;
+use yii\helpers\Console;
 use yii\helpers\FileHelper;
+use function mb_strwidth;
 
 class DefaultController extends Controller
 {
@@ -42,8 +46,7 @@ class DefaultController extends Controller
         if ($this->color) {
             $summary = $this->colorize(array_values($summary));
         }
-        $this->climate->green()->border('=', 110)
-            ->tab()->tab()->tab()->tab()->tab()->lightYellow()->out('YII-2 Code Statistic');
+        $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
     }
     
@@ -77,6 +80,11 @@ class DefaultController extends Controller
     protected function wrap($string, $color)
     {
         return "<bold><$color>$string</$color></bold>";
+    }
+    
+    protected function headline($string, $color)
+    {
+        $this->climate->green()->border('=', 110)->$color()->tab(4)->out($string);
     }
     
     /**
