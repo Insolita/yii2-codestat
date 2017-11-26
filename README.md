@@ -8,15 +8,21 @@ Yii2 Code Statistic
 
 Installation
 ============
+
+*NOTE*:
+
+ - 1.x branch require yii>=2.0.13
+ - 0.x branch for older yii versions
+
 Either run
 
 ```
-composer require -dev insolita/yii2-codestat:~0.0.1
+composer require -dev insolita/yii2-codestat:~1.0.0
 ```
 or add
 
 ```
-"insolita/yii2-codestat": "~0.0.1"
+"insolita/yii2-codestat": "~1.0.0"
 ```
 in require-dev section of your `composer.json` file.
 
