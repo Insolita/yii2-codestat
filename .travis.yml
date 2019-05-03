@@ -1,6 +1,6 @@
 language: php
 php:
-  - 7.1
+  - 7.2
 matrix:
    fast_finish: true
 # cache vendor dirs
@@ -16,7 +16,6 @@ install:
   - phpenv config-rm xdebug.ini || echo "xdebug is not installed"
   - travis_retry composer self-update && composer --version
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - travis_retry composer global require "fxp/composer-asset-plugin:^1.3.1" --quiet --no-interaction
   - travis_retry composer install --prefer-dist --no-interaction
 
 script: phpunit -vvv
