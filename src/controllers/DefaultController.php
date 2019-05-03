@@ -15,6 +15,7 @@ use yii\console\ExitCode;
 
 class DefaultController extends Controller
 {
+    public $defaultAction = 'summary';
     /**
      * @var CodeStatModule|Module
      **/
@@ -30,7 +31,12 @@ class DefaultController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function actionIndex(bool $showErrors = false)
+    /**
+     *  Show summary from partial phploc statistic information per each defined group
+     * @param bool $showErrors
+     * @return int
+     */
+    public function actionSummary(bool $showErrors = false)
     {
         $service = $this->module->statService;
         $summary = $service->makeStatistic($this->module->prepareFiles());
@@ -58,13 +64,29 @@ class DefaultController extends Controller
         return ExitCode::OK;
     }
 
-    public function actionAdvanced()
+    /**
+     *  Return full phploc statistic per each defined group
+     * @param string|null $groupName
+     * @return int
+     */
+    public function actionAdvanced(?string $groupName = null):int
     {
         $service = $this->module->statService;
-        $statistic = $service->makeAdvansedStatistic($this->module->prepareFiles());
-        $this->headline('YII-2 Code Statistic', 'lightYellow');
-        foreach ($statistic as $groupName =>$data){
-            $this->headline($groupName, 'yellow');
+        $statistic = $service->makeAdvancedStatistic($this->module->prepareFiles());
+        $this->headline('YII-2 Code Statistic', 'green');
+
+        if($groupName !==null){
+            if(!isset($statistic[$groupName])){
+                $this->stderr('Undefined group '.$groupName);
+                return ExitCode::DATAERR;
+            }
+            $this->headline($groupName, 'lightYellow');
+            $this->climate->table($statistic[$groupName]);
+            return ExitCode::OK;
+        }
+
+        foreach ($statistic as $group =>$data){
+            $this->headline($group, 'lightYellow');
             $this->climate->table($data);
             if(!$this->confirm('Show next group?')){
                 break;
@@ -72,7 +94,23 @@ class DefaultController extends Controller
         }
         return ExitCode::OK;
     }
-    
+
+    /**
+     * Return  phploc statistic for all files
+     * @return int
+     */
+    public function actionCommon():int
+    {
+        $service = $this->module->statService;
+        $statistic = $service->makeCommonStatistic($this->module->prepareFiles());
+        $this->headline('YII-2 Code Statistic', 'green');
+        $this->climate->table($statistic);
+        return ExitCode::OK;
+    }
+
+    /**
+     * Show files that will be processed accordingly module configuration
+     */
     public function actionListFiles()
     {
         Output::info('The following files will be processed accordingly module configuration');

@@ -34,12 +34,14 @@ class CodestatService implements CodestatServiceInterface
     }
     
     /**
+     * Return summary from partial phploc statistic information per each defined group
+     * @see \insolita\codestat\CodeStatModule::$groupRules
      * @param array $files
      * @param callable|null  $analyseCallback
      *
      * @return array
      */
-    public function makeStatistic(array $files, $analyseCallback = null)
+    public function makeStatistic(array $files, $analyseCallback = null):array
     {
         foreach ($this->reflectionGenerator($this->classGenerator($files)) as $reflection) {
             $this->groups->fill($reflection);
@@ -49,13 +51,19 @@ class CodestatService implements CodestatServiceInterface
             if (is_callable($analyseCallback)) {
                 $statistic[$group->getName()] = call_user_func($analyseCallback, $group);
             } else {
-                $statistic[$group->getName()] = $this->analyse($group);
+                $statistic[$group->getName()] = $this->makeSummary($group);
             }
         }
         return $statistic;
     }
 
-    public function makeAdvansedStatistic(array $files)
+    /**
+     * Return full phploc statistic per each defined group
+     * @see \insolita\codestat\CodeStatModule::$groupRules
+     * @param array $files
+     * @return array
+     */
+    public function makeAdvancedStatistic(array $files):array
     {
         foreach ($this->reflectionGenerator($this->classGenerator($files)) as $reflection) {
             $this->groups->fill($reflection);
@@ -70,6 +78,21 @@ class CodestatService implements CodestatServiceInterface
                 $statistic[$group->getName()][] = ['Metric'=>$key, 'Value'=>$value];
             }
             unset($result);
+        }
+        return $statistic;
+    }
+
+    /**
+     * Return  phploc statistic for all files
+     * @param array $files
+     * @return array
+     */
+    public function makeCommonStatistic(array $files):array
+    {
+        $statistic = [];
+        $result = (new Analyser())->countFiles($files, false);
+        foreach ($result as $key =>$value){
+            $statistic[] = ['Metric'=>$key, 'Value'=>$value];
         }
         return $statistic;
     }
@@ -103,11 +126,6 @@ class CodestatService implements CodestatServiceInterface
     public function withErrorsCounter():int
     {
         return count($this->withErrors);
-    }
-    
-    public function nonClassesCounter():int
-    {
-        return $this->nonClasses;
     }
 
     public function errorList():array
@@ -165,7 +183,7 @@ class CodestatService implements CodestatServiceInterface
      *
      * @return array
      */
-    protected function analyse(Group $group)
+    protected function makeSummary(Group $group)
     {
         $summary = [];
         if ($group->getNumberOfClasses() > 0) {
@@ -181,17 +199,17 @@ class CodestatService implements CodestatServiceInterface
             $summary['Complexity'] = $groupMetrics['ccn'];
             $summary['Class/Complexity avg'] = round($groupMetrics['classCcnAvg'], 4);
             return $summary;
-        } else {
-            return $summary + array_fill_keys([
-                    'Classes',
-                    'Methods/Class',
-                    'Methods',
-                    'Lines',
-                    'LoC',
-                    'LoC/Method',
-                    'Complexity',
-                    'Class/Complexity avg',
-                ], 0);
         }
+
+        return $summary + array_fill_keys([
+                'Classes',
+                'Methods/Class',
+                'Methods',
+                'Lines',
+                'LoC',
+                'LoC/Method',
+                'Complexity',
+                'Class/Complexity avg',
+            ], 0);
     }
 }

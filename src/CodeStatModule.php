@@ -33,6 +33,7 @@ use yii\web\Controller as WebController;
 
 class CodeStatModule extends Module
 {
+    public $defaultRoute = 'default/summary';
     /**
      * array, list of directories that will be scanned
      *
