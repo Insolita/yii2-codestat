@@ -10,8 +10,6 @@ use insolita\codestat\helpers\Output;
 use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
-use yii\helpers\FileHelper;
-
 
 class DefaultController extends Controller
 {
@@ -34,7 +32,12 @@ class DefaultController extends Controller
         $this->climate = $CLImate;
         parent::__construct($id, $module, $config);
     }
-    
+
+    public function options($actionID)
+    {
+        return array_merge(parent::options($actionID) , ['showErrors']);
+    }
+
     public function actionIndex()
     {
         $service = $this->module->statService;
