@@ -33,5 +33,10 @@
             "insolita\\codestat\\": "src/",
             "tests\\":"tests/"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-legacy": "1.0.x-dev"
+        }
     }
 }
