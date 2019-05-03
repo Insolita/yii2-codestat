@@ -7,7 +7,7 @@ namespace insolita\codestat;
 
 use function array_merge;
 use Exception;
-use insolita\codestat\lib\classdetect\RegexpDetector;
+use insolita\codestat\lib\classdetect\TokenizerDetector;
 use insolita\codestat\lib\CodestatService;
 use insolita\codestat\lib\collection\GroupCollection;
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
@@ -74,7 +74,7 @@ class CodeStatModule extends Module
     /**
      * @var string|ClassDetectorInterface
      */
-    public $classDetector = RegexpDetector::class;
+    public $classDetector = TokenizerDetector::class;
     /**
      * @var array|GroupCollection
      * Leave empty for use defaults

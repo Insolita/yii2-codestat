@@ -5,11 +5,13 @@
 
 namespace insolita\codestat\controllers;
 
+use function count;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
 use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
+use yii\console\ExitCode;
 
 class DefaultController extends Controller
 {
@@ -28,7 +30,7 @@ class DefaultController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function actionIndex($showErrors = false)
+    public function actionIndex(bool $showErrors = false)
     {
         $service = $this->module->statService;
         $summary = $service->makeStatistic($this->module->prepareFiles());
@@ -44,10 +46,31 @@ class DefaultController extends Controller
         $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
 
-        if($showErrors === true){
-            $this->headline('Failed for resolve', 'lightYellow');
+        if($showErrors !== true){
+           return ExitCode::OK;
+        }
+        $this->headline('Failed for resolve', 'lightYellow');
+        if(!count($service->errorList())){
+            $this->climate->info('Errors not found');
+        }else{
             $this->climate->table($service->errorList());
         }
+        return ExitCode::OK;
+    }
+
+    public function actionAdvanced()
+    {
+        $service = $this->module->statService;
+        $statistic = $service->makeAdvansedStatistic($this->module->prepareFiles());
+        $this->headline('YII-2 Code Statistic', 'lightYellow');
+        foreach ($statistic as $groupName =>$data){
+            $this->headline($groupName, 'yellow');
+            $this->climate->table($data);
+            if(!$this->confirm('Show next group?')){
+                break;
+            }
+        }
+        return ExitCode::OK;
     }
     
     public function actionListFiles()

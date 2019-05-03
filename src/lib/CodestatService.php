@@ -54,6 +54,25 @@ class CodestatService implements CodestatServiceInterface
         }
         return $statistic;
     }
+
+    public function makeAdvansedStatistic(array $files)
+    {
+        foreach ($this->reflectionGenerator($this->classGenerator($files)) as $reflection) {
+            $this->groups->fill($reflection);
+        }
+        $statistic = [];
+        foreach ($this->groups as $group) {
+            if ($group->getNumberOfClasses() === 0) {
+                continue;
+            }
+            $result = (new Analyser())->countFiles($group->getFiles(), false);
+            foreach ($result as $key =>$value){
+                $statistic[$group->getName()][] = ['Metric'=>$key, 'Value'=>$value];
+            }
+            unset($result);
+        }
+        return $statistic;
+    }
     
     /**
      * @param array $statistic

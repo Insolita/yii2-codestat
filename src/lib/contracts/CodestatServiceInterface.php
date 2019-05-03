@@ -22,4 +22,6 @@ interface CodestatServiceInterface
      * @return array
      */
     public function summaryStatistic(array $statistic);
+
+    public function makeAdvansedStatistic(array $files);
 }
