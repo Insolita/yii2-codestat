@@ -7,7 +7,10 @@ return [
     'language'       => 'ru',
     'charset'        => 'utf-8',
     'bootstrap'=>['log'],
-    'aliases'=>[],
+    'aliases'=>[
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
+    ],
     'container'=>[
         'definitions'=>[],
         'singletons'=>[]

@@ -10,19 +10,19 @@ Installation
 ============
 
 *NOTE*:
-
+ - 2.x branch for php >=7.2
  - 1.x branch require yii>=2.0.13
  - 0.x branch for older yii versions
 
 Either run
 
 ```
-composer require --dev insolita/yii2-codestat:~1.0.1
+composer require --dev insolita/yii2-codestat:~2.0
 ```
 or add
 
 ```
-"insolita/yii2-codestat": "~1.0.1"
+"insolita/yii2-codestat": "~2.0"
 ```
 in require-dev section of your `composer.json` file.
 

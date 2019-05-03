@@ -17,9 +17,9 @@
         "league/climate": "^3.2"
     } ,
     "require-dev": {
-        "phpunit/phpunit":    "~6.0" ,
+        "phpunit/phpunit":    "~7.0" ,
         "codeception/verify":  "~1.0.0" ,
-        "codeception/specify": "~1.0"
+        "codeception/specify": "~1.1"
     } ,
     "repositories": [
         {

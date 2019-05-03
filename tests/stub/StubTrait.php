@@ -75,12 +75,12 @@ trait StubTrait
         ];
     }
     
-    protected function failRules()
+    public function failRules()
     {
         return [
-            ['a', 'b'],
-            ['a' => Event::class, Action::class],
-            ['a' => Event::class, 'b' => []],
+            [['a', 'b']],
+            [['a' => Event::class, Action::class]],
+            [['a' => Event::class, 'b' => []]],
         ];
     }
 }
