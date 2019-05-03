@@ -23,7 +23,7 @@ interface CodestatServiceInterface
      */
     public function summaryStatistic(array $statistic);
 
-    public function makeAdvancedStatistic(array $files, array $metrics=[]);
+    public function makeAdvancedStatistic(array $files, array $metrics = []);
 
     public function errorList():array;
 
@@ -33,5 +33,5 @@ interface CodestatServiceInterface
      * @param array $metrics
      * @return array
      */
-    public function makeCommonStatistic(array $files, array $metrics=[]):array;
+    public function makeCommonStatistic(array $files, array $metrics = []):array;
 }
