@@ -6,13 +6,10 @@ Yii2 Code Statistic
 
 ![screenshot](codestat.png)
 
+Based on phploc/phploc
+
 Installation
 ============
-
-*NOTE*:
- - 2.x branch for php >=7.2
- - 1.x branch require yii>=2.0.13
- - 0.x branch for older yii versions
 
 Either run
 
