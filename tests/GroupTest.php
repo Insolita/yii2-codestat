@@ -5,7 +5,6 @@
 
 namespace tests;
 
-use Codeception\AssertThrows;
 use Codeception\Specify;
 use function expect_not;
 use function expect_that;
@@ -42,8 +41,7 @@ use yii\base\Widget;
 class GroupTest extends \PHPUnit\Framework\TestCase
 {
     use Specify;
-    use AssertThrows;
-    
+
     public function testInitial()
     {
         $this->should('be created ', function () {
@@ -52,23 +50,32 @@ class GroupTest extends \PHPUnit\Framework\TestCase
             expect($group->getFiles())->isEmpty();
             expect($group->getNumberOfClasses())->equals(0);
         });
-        
-        $this->should('throw exceptions on wrong initialization', function () {
-            $this->assertThrows(InvalidArgumentException::class, function () {
-                new Group('my', null);
-            });
-            $this->assertThrows(InvalidArgumentException::class, function () {
-                new Group('my', []);
-            });
-            $this->assertThrows(InvalidArgumentException::class, function () {
-                new Group(null, Widget::class);
-            });
-            $this->assertThrows(InvalidArgumentException::class, function () {
-                new Group('', Widget::class);
-            });
-        });
     }
-    
+
+    public function testExceptionOnWrongInitialization1()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Group('', Widget::class);
+    }
+
+    public function testExceptionOnWrongInitialization2()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Group(null, Widget::class);
+    }
+
+    public function testExceptionOnWrongInitialization3()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Group('my', []);
+    }
+
+    public function testExceptionOnWrongInitialization4()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new Group('my', null);
+    }
+
     public function testAddFiles()
     {
         $this->should('add different files', function () {

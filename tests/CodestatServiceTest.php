@@ -12,9 +12,9 @@ use insolita\codestat\lib\collection\GroupCollection;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\PHPLOC\Analyser;
 use tests\stub\StubTrait;
+use yii\base\BaseObject;
 use yii\base\Behavior;
 use yii\base\Controller as BaseController;
-use yii\base\Object;
 use function expect;
 
 class CodestatServiceTest extends TestCase
@@ -66,9 +66,9 @@ class CodestatServiceTest extends TestCase
             $service = new CodestatService(
                 new RegexpDetector(),
                 new GroupCollection([
-                    'objects' => Object::class,
+                    'objects' => BaseObject::class,
                     'nonObjects' => function (\ReflectionClass $reflection) {
-                        return !$reflection->isSubclassOf(Object::class);
+                        return !$reflection->isSubclassOf(BaseObject::class);
                     },
                 ])
             );
@@ -93,7 +93,7 @@ class CodestatServiceTest extends TestCase
                 new RegexpDetector(),
                 new GroupCollection($this->rules())
             );
-            $result = $service->makeStatistic($this->files());
+            $service->makeStatistic($this->files());
         });
     }
     

@@ -5,7 +5,6 @@
 
 namespace tests;
 
-use Codeception\AssertThrows;
 use Codeception\Specify;
 use insolita\codestat\lib\collection\GroupCollection;
 use InvalidArgumentException;
@@ -26,7 +25,6 @@ use yii\base\BaseObject;
 class GroupCollectionTest extends \PHPUnit\Framework\TestCase
 {
     use Specify;
-    use AssertThrows;
     use StubTrait;
     
     public function testInit()
@@ -38,13 +36,15 @@ class GroupCollectionTest extends \PHPUnit\Framework\TestCase
                 expect_that(in_array($group->getName(), array_keys($this->rules())));
             }
         });
-        $this->should('throw exception', function ($failRule) {
-            $this->assertThrows(InvalidArgumentException::class, function () use ($failRule) {
-                new GroupCollection($failRule);
-            });
-        }, [
-            'examples' => [$this->failRules()],
-        ]);
+    }
+
+    /**
+     * @dataProvider failRules()
+    */
+    public function testFailInitializations($failRule)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        new GroupCollection($failRule);
     }
     
     public function testFill()
