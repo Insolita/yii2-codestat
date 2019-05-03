@@ -17,7 +17,7 @@ Installation
 Either run
 
 ```
-composer require -dev insolita/yii2-codestat:~1.0.1
+composer require --dev insolita/yii2-codestat:~1.0.1
 ```
 or add
 
