@@ -19,17 +19,12 @@
     "require-dev": {
         "phpunit/phpunit":    "~6.0" ,
         "codeception/verify":  "~1.0.0" ,
-        "codeception/specify": "~1.0",
-        "codeception/assert-throws": "dev-master"
+        "codeception/specify": "~1.0"
     } ,
     "repositories": [
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
-        },
-        {
-            "type": "git",
-            "url": "https://github.com/Codeception/AssertThrows.git"
         }
     ],
     "suggest":     { } ,

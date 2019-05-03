@@ -12,7 +12,6 @@ use yii\base\Component;
 use yii\base\Event;
 use yii\base\Model;
 use yii\base\Module;
-use yii\base\Object;
 use yii\base\Widget;
 use yii\console\Controller as ConsoleController;
 use yii\db\BaseActiveRecord;
@@ -64,7 +63,6 @@ trait StubTrait
             'Modules' => Module::class,
             'Widgets' => Widget::class,
             'Components' => Component::class,
-            'Objects' => Object::class,
             'BaseObjects' => BaseObject::class,
             'PureClass' => function (\ReflectionClass $reflection) {
                 return (
