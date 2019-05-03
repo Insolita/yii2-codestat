@@ -28,9 +28,6 @@ use yii\rest\Controller as RestController;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
 
-/**
- *
- */
 class CodeStatModule extends Module
 {
     /**
@@ -38,10 +35,7 @@ class CodeStatModule extends Module
      *
      * @var array
      */
-    public $scanTargets
-        = [
-            //
-        ];
+    public $scanTargets = [];
     
     /**
      * array, list of patterns excluding from the results matching file or directory paths
@@ -49,8 +43,7 @@ class CodeStatModule extends Module
      * @see \yii\helpers\FileHelper::findFiles() 'except' doc
      * @var array
      */
-    public $exceptTargets
-        = [
+    public $exceptTargets= [
             'config*',
             'vendor*',
             '*web/*',
@@ -93,7 +86,10 @@ class CodeStatModule extends Module
         $this->prepareService();
         parent::init();
     }
-    
+
+    /**
+     * @throws \yii\base\InvalidConfigException
+     */
     protected function checkConfig()
     {
         if (empty($this->scanTargets)) {
