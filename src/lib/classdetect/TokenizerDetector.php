@@ -102,7 +102,7 @@ class TokenizerDetector implements ClassDetectorInterface
                 case T_TRAIT:
                 case T_INTERFACE:
                     if (!$this->isClassDeclaration($tokens, $i)) {
-                        continue;
+                        break;
                     }
                     $className = $this->getClassName($namespace, $tokens, $i);
                     break;
