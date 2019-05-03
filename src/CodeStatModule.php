@@ -18,7 +18,7 @@ use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\base\Module;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\base\Widget;
 use yii\console\Controller as ConsoleController;
 use yii\db\ActiveQuery;
@@ -84,10 +84,7 @@ class CodeStatModule extends Module
      * Leave empty for use defaults
      */
     public $groupRules;
-    
-    /**
-     *
-     */
+
     public function init()
     {
         $this->checkConfig();
@@ -129,7 +126,7 @@ class CodeStatModule extends Module
             'Modules' => Module::class,
             'Widgets' => Widget::class,
             'Components' => Component::class,
-            'Objects' => Object::class,
+            'Objects' => BaseObject::class,
             'PureClass' => function(\ReflectionClass $reflection) {
                 return (
                     !$reflection->getParentClass()
