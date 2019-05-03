@@ -19,11 +19,6 @@ class DefaultController extends Controller
     public $module;
     
     public $color = true;
-
-    /**
-     * If true will output files with failed reads by Reflection class
-    */
-    public $showErrors = false;
     
     protected $climate;
     
@@ -33,12 +28,7 @@ class DefaultController extends Controller
         parent::__construct($id, $module, $config);
     }
 
-    public function options($actionID)
-    {
-        return array_merge(parent::options($actionID) , ['showErrors']);
-    }
-
-    public function actionIndex()
+    public function actionIndex($showErrors = false)
     {
         $service = $this->module->statService;
         $summary = $service->makeStatistic($this->module->prepareFiles());
@@ -54,7 +44,7 @@ class DefaultController extends Controller
         $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
 
-        if($this->showErrors === true){
+        if($showErrors === true){
             $this->headline('Failed for resolve', 'lightYellow');
             $this->climate->table($service->errorList());
         }
