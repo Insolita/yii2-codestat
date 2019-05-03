@@ -140,10 +140,10 @@ class CodeStatModule extends Module
     public function prepareFiles():array
     {
         $files = [];
-        foreach ($this->module->scanTargets as $dir) {
+        foreach ($this->scanTargets as $dir) {
             $files[] = FileHelper::findFiles($dir, [
                 'only' => ['*.php'],
-                'except' => $this->module->exceptTargets,
+                'except' => $this->exceptTargets,
                 'caseSensitive' => false,
                 'recursive' => true,
             ]);
