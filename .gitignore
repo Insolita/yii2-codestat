@@ -1,3 +1,5 @@
 runtime/*
 /vendor*
 .idea
+# composer lock files
+composer.lock
