@@ -5,6 +5,7 @@
 
 namespace insolita\codestat;
 
+use function array_merge;
 use Exception;
 use insolita\codestat\lib\classdetect\RegexpDetector;
 use insolita\codestat\lib\CodestatService;
@@ -25,6 +26,7 @@ use yii\console\Controller as ConsoleController;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
 use yii\di\Instance;
+use yii\helpers\FileHelper;
 use yii\rest\Controller as RestController;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
@@ -133,6 +135,20 @@ class CodeStatModule extends Module
                 );
             }
         ];
+    }
+
+    public function prepareFiles():array
+    {
+        $files = [];
+        foreach ($this->module->scanTargets as $dir) {
+            $files[] = FileHelper::findFiles($dir, [
+                'only' => ['*.php'],
+                'except' => $this->module->exceptTargets,
+                'caseSensitive' => false,
+                'recursive' => true,
+            ]);
+        }
+        return array_merge(...$files);
     }
     
     protected function prepareScanTargets()

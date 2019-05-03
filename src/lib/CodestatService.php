@@ -5,6 +5,7 @@
 
 namespace insolita\codestat\lib;
 
+use function count;
 use insolita\codestat\lib\collection\Group;
 use insolita\codestat\lib\collection\GroupCollection;
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
@@ -18,8 +19,8 @@ class CodestatService implements CodestatServiceInterface
     protected $groups;
     
     private $nonClasses = 0;
-    
-    private $withErrors = 0;
+
+    private $withErrors = [];
     
     /**
      * @var \insolita\codestat\lib\contracts\ClassDetectorInterface
@@ -80,16 +81,20 @@ class CodestatService implements CodestatServiceInterface
         return $result;
     }
     
-    public function withErrorsCounter()
+    public function withErrorsCounter():int
     {
-        return $this->withErrors;
+        return count($this->withErrors);
     }
     
-    public function nonClassesCounter()
+    public function nonClassesCounter():int
     {
         return $this->nonClasses;
     }
-    
+
+    public function errorList():array
+    {
+        return $this->withErrors;
+    }
     /**
      * @param array $files
      *
@@ -131,7 +136,7 @@ class CodestatService implements CodestatServiceInterface
                     yield $reflection;
                 }
             } catch (\Exception $e) {
-                $this->withErrors += 1;
+                $this->withErrors[] = ['class'=>$class, 'error'=>$e->getMessage().' '.$e->getFile().':'.$e->getLine()];
             }
         }
     }

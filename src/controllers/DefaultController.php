@@ -21,6 +21,11 @@ class DefaultController extends Controller
     public $module;
     
     public $color = true;
+
+    /**
+     * If true will output files with failed reads by Reflection class
+    */
+    public $showErrors = false;
     
     protected $climate;
     
@@ -33,7 +38,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $service = $this->module->statService;
-        $summary = $service->makeStatistic($this->prepareFiles());
+        $summary = $service->makeStatistic($this->module->prepareFiles());
         foreach ($summary as $name => &$row) {
             $row = ['Group' => $name] + $row;
         }
@@ -45,12 +50,17 @@ class DefaultController extends Controller
         }
         $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
+
+        if($this->showErrors === true){
+            $this->headline('Failed for resolve', 'lightYellow');
+            $this->climate->table($service->errorList());
+        }
     }
     
     public function actionListFiles()
     {
         Output::info('The following files will be processed accordingly module configuration');
-        $files = $this->prepareFiles();
+        $files = $this->module->prepareFiles();
         Output::arrayList($files);
         Output::separator();
         Output::info('Total: ' . count($files));
@@ -82,22 +92,5 @@ class DefaultController extends Controller
     protected function headline($string, $color)
     {
         $this->climate->green()->border('=', 110)->$color()->tab(4)->out($string);
-    }
-    
-    /**
-     * @return array
-     */
-    protected function prepareFiles()
-    {
-        $files = [];
-        foreach ($this->module->scanTargets as $dir) {
-            $files = array_merge(FileHelper::findFiles($dir, [
-                'only' => ['*.php'],
-                'except' => $this->module->exceptTargets,
-                'caseSensitive' => false,
-                'recursive' => true,
-            ]), $files);
-        }
-        return $files;
     }
 }
