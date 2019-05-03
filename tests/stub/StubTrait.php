@@ -75,7 +75,7 @@ trait StubTrait
         ];
     }
     
-    protected function failRules()
+    public function failRules()
     {
         return [
             ['a', 'b'],
