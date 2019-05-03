@@ -47,7 +47,7 @@ class CodeStatModule extends Module
      * @see \yii\helpers\FileHelper::findFiles() 'except' doc
      * @var array
      */
-    public $exceptTargets= [
+    public $exceptTargets = [
             'config*',
             'vendor*',
             '*web/*',
@@ -86,7 +86,7 @@ class CodeStatModule extends Module
      * List of phploc metrics showed for advanced, common, directory and file actions, by default all available metrics
      * will be showed
      * @var array
-    */
+     */
     public $metrics = [];
 
     public function init()
