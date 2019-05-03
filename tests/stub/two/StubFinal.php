@@ -5,9 +5,9 @@
 
 namespace tests\stub\two;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
-final class StubFinal extends Object
+final class StubFinal extends BaseObject
 {
     public function one()
     {

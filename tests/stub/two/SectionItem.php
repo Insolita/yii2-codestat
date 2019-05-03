@@ -5,9 +5,10 @@
 
 namespace tests\stub\two;
 
-use yii\base\Object;
 
-class SectionItem extends Object
+use yii\base\BaseObject;
+
+class SectionItem extends BaseObject
 {
     public $key;
     public $name;
