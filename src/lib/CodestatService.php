@@ -135,8 +135,8 @@ class CodestatService implements CodestatServiceInterface
                 if (!$reflection->isInternal()) {
                     yield $reflection;
                 }
-            } catch (\Exception $e) {
-                $this->withErrors[] = ['class'=>$class, 'error'=>$e->getMessage().' '.$e->getFile().':'.$e->getLine()];
+            } catch (\Throwable $e) {
+                $this->withErrors[] = ['class'=>$class, 'error'=>$e->getMessage()];
             }
         }
     }
