@@ -5,9 +5,6 @@
 
 namespace insolita\codestat\lib\contracts;
 
-/**
- *
- */
 interface ClassDetectorInterface
 {
     /**

@@ -5,9 +5,7 @@
 
 namespace insolita\codestat\lib\contracts;
 
-/**
- *
- */
+
 interface CodestatServiceInterface
 {
     /**

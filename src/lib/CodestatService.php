@@ -12,9 +12,7 @@ use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use ReflectionClass;
 use SebastianBergmann\PHPLOC\Analyser;
 
-/**
- *
- */
+
 class CodestatService implements CodestatServiceInterface
 {
     protected $groups;

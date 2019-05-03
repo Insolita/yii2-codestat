@@ -8,13 +8,10 @@ namespace insolita\codestat\controllers;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
 use League\CLImate\CLImate;
-use function str_repeat;
-use Yii;
 use yii\base\Module;
 use yii\console\Controller;
-use yii\helpers\Console;
 use yii\helpers\FileHelper;
-use function mb_strwidth;
+
 
 class DefaultController extends Controller
 {
