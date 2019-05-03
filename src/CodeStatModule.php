@@ -5,6 +5,7 @@
 
 namespace insolita\codestat;
 
+use Exception;
 use insolita\codestat\lib\classdetect\RegexpDetector;
 use insolita\codestat\lib\CodestatService;
 use insolita\codestat\lib\collection\GroupCollection;
@@ -123,6 +124,7 @@ class CodeStatModule extends Module
             'Widgets' => Widget::class,
             'Components' => Component::class,
             'Objects' => BaseObject::class,
+            'Exceptions' => Exception::class,
             'PureClass' => function(\ReflectionClass $reflection) {
                 return (
                     !$reflection->getParentClass()
