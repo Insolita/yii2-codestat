@@ -82,6 +82,13 @@ class CodeStatModule extends Module
      */
     public $groupRules;
 
+    /**
+     * List of phploc metrics showed for advanced, common, directory and file actions, by default all available metrics
+     * will be showed
+     * @var array
+    */
+    public $metrics = [];
+
     public function init()
     {
         $this->checkConfig();

@@ -72,6 +72,17 @@ Show full phploc report for all matched files
 ./yii codestat/default/common
 ```
 
+Show full phploc report for custom directory
+
+```
+./yii codestat/default/directory @common/models
+```
+
+Show full phploc report for custom file
+
+```
+./yii codestat/default/file @common/lib/MySuperClass.php
+```
 
 Advanced Usage
 --------------
@@ -79,14 +90,19 @@ Advanced Usage
 #### Custom Class Grouping Rules
 
 You can extend or overwrite property 'groupRules', with supported formats
+
 `'Group Name' => 'BaseParentClass'`
- where 'BaseParentClass' should by verified with (\ReflectionClass)->isSubclassOf();
+
+ where 'BaseParentClass' should by verified with `(\ReflectionClass)->isSubclassOf()`
+ 
 or
+
 ```
 'Group Name' => function(\ReflectionClass $reflection){
        //Should return true if class valid for this group, otherwise false;
-                }
+  }
 ```
+
 Final example
 
 ```
@@ -114,16 +130,31 @@ php
 
 ### Custom code metrics
 
-Code metrics provided by [https://github.com/sebastianbergmann/phploc](https://github.com/sebastianbergmann/phploc),  has lot of variants, you can define own combination, or also use another package;
-set property 'analyseCallback' in module like as
+Code metrics provided by [https://github.com/sebastianbergmann/phploc](https://github.com/sebastianbergmann/phploc),  has lot of variants, you can define own combination
+
+For actions advanced/common/directory/file you should set metrics property with array of necessary metric names
+
+```
+php
+'modules'=>[
+ ....
+        'codestat'=>[
+            'class'=>\insolita\codestat\CodeStatModule::class,
+            'metrics'=>['loc','lloc','classCcnAvg', 'classLlocAvg', 'methodCcnAvg']
+            ]
+ ]
+```
+
+For summary action you should provide property 'analyseCallback' in module like as
 ```php
     'analyseCallback = function($group){
                /**@var insolita\codestat\lib\collection\Group $group **/
                $metrics=$customAnalyzer->analyze($group->getFiles());
-               return ['totalFiles'=>count($group->getFiles()), 'metric1'=>$metrics[some], ...etc];
+               return ['totalFiles'=>count($group->getFiles()),  'metric1'=>$metrics[some], ...etc];
      }
 ```
-It should return associative array with `'metric name' => 'metric value'` data and will be replacement for https://github.com/Insolita/yii2-codestat/blob/7d0fc3351718b2052624ea091ff8f154fe471aeb/src/lib/CodestatService.php#L154
+It should return associative array with `'metric name' => 'metric value'` data and will replace internal https://github
+.com/Insolita/yii2-codestat/blob/7d0fc3351718b2052624ea091ff8f154fe471aeb/src/lib/CodestatService.php#L154
 
 And also table summary convention - if metric name contains slash "/", for summary row will be counted average value, otherwise sum
 

@@ -6,12 +6,14 @@
 namespace insolita\codestat\controllers;
 
 use function count;
+use function file_exists;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
 use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\helpers\FileHelper;
 
 class DefaultController extends Controller
 {
@@ -72,7 +74,7 @@ class DefaultController extends Controller
     public function actionAdvanced(?string $groupName = null):int
     {
         $service = $this->module->statService;
-        $statistic = $service->makeAdvancedStatistic($this->module->prepareFiles());
+        $statistic = $service->makeAdvancedStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
 
         if($groupName !==null){
@@ -102,7 +104,49 @@ class DefaultController extends Controller
     public function actionCommon():int
     {
         $service = $this->module->statService;
-        $statistic = $service->makeCommonStatistic($this->module->prepareFiles());
+        $statistic = $service->makeCommonStatistic($this->module->prepareFiles(), $this->module->metrics);
+        $this->headline('YII-2 Code Statistic', 'green');
+        $this->climate->table($statistic);
+        return ExitCode::OK;
+    }
+
+    /**
+     * Return  phploc statistic for concrete directory
+     * @param string $dir - Path or path alias
+     * @return int
+     */
+    public function actionDirectory(string $dir):int
+    {
+        $service = $this->module->statService;
+        $dir = \Yii::getAlias($dir);
+        if(!is_dir($dir)){
+            $this->stderr('Directory not found by path '.$dir);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+        $statistic = $service->makeCommonStatistic(FileHelper::findFiles($dir, [
+            'only' => ['*.php'],
+            'caseSensitive' => false,
+            'recursive' => true,
+        ]), $this->module->metrics);
+        $this->headline('YII-2 Code Statistic', 'green');
+        $this->climate->table($statistic);
+        return ExitCode::OK;
+    }
+
+    /**
+     * Return  phploc statistic for concrete file
+     * @param string $filePath - Path or path alias
+     * @return int
+     */
+    public function actionFile(string $filePath):int
+    {
+        $service = $this->module->statService;
+        $filePath = \Yii::getAlias($filePath);
+        if(!file_exists($filePath)){
+            $this->stderr('File not found by path '.$filePath);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+        $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
         $this->climate->table($statistic);
         return ExitCode::OK;

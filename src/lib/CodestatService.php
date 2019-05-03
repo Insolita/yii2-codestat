@@ -6,6 +6,7 @@
 namespace insolita\codestat\lib;
 
 use function count;
+use function in_array;
 use insolita\codestat\lib\collection\Group;
 use insolita\codestat\lib\collection\GroupCollection;
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
@@ -59,11 +60,12 @@ class CodestatService implements CodestatServiceInterface
 
     /**
      * Return full phploc statistic per each defined group
-     * @see \insolita\codestat\CodeStatModule::$groupRules
      * @param array $files
+     * @param array $metrics
      * @return array
+     * @see \insolita\codestat\CodeStatModule::$groupRules
      */
-    public function makeAdvancedStatistic(array $files):array
+    public function makeAdvancedStatistic(array $files, array $metrics=[]):array
     {
         foreach ($this->reflectionGenerator($this->classGenerator($files)) as $reflection) {
             $this->groups->fill($reflection);
@@ -75,6 +77,9 @@ class CodestatService implements CodestatServiceInterface
             }
             $result = (new Analyser())->countFiles($group->getFiles(), false);
             foreach ($result as $key =>$value){
+                if(!empty($metrics) && !in_array($key, $metrics, true)){
+                    continue;
+                }
                 $statistic[$group->getName()][] = ['Metric'=>$key, 'Value'=>$value];
             }
             unset($result);
@@ -85,13 +90,17 @@ class CodestatService implements CodestatServiceInterface
     /**
      * Return  phploc statistic for all files
      * @param array $files
+     * @param array $metrics
      * @return array
      */
-    public function makeCommonStatistic(array $files):array
+    public function makeCommonStatistic(array $files, array $metrics=[]):array
     {
         $statistic = [];
         $result = (new Analyser())->countFiles($files, false);
         foreach ($result as $key =>$value){
+            if(!empty($metrics) && !in_array($key, $metrics, true)){
+                continue;
+            }
             $statistic[] = ['Metric'=>$key, 'Value'=>$value];
         }
         return $statistic;

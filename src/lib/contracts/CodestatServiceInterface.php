@@ -23,14 +23,15 @@ interface CodestatServiceInterface
      */
     public function summaryStatistic(array $statistic);
 
-    public function makeAdvancedStatistic(array $files);
+    public function makeAdvancedStatistic(array $files, array $metrics=[]);
 
     public function errorList():array;
 
     /**
      * Return  phploc statistic for all files
      * @param array $files
+     * @param array $metrics
      * @return array
      */
-    public function makeCommonStatistic(array $files):array;
+    public function makeCommonStatistic(array $files, array $metrics=[]):array;
 }
