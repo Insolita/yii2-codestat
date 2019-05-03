@@ -54,13 +54,13 @@ class DefaultController extends Controller
         $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
 
-        if($showErrors !== true){
+        if ($showErrors !== true) {
             return ExitCode::OK;
         }
         $this->headline('Failed for resolve', 'lightYellow');
-        if(!count($service->errorList())){
+        if (!count($service->errorList())) {
             $this->climate->info('Errors not found');
-        } else{
+        } else {
             $this->climate->table($service->errorList());
         }
         return ExitCode::OK;
