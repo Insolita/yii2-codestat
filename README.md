@@ -35,7 +35,7 @@ php
         'codestat'=>[
             'class'=>\insolita\codestat\CodeStatModule::class,
             'scanTargets' => ['@backend/','@common/','@frontend/','@console/'],
-            'exceptTargets' => ['*config*','vendor*','*web/*','*runtime/*','*views/*','*tests/*'],
+            'exceptTargets' => ['*config*','vendor*','*web/','*runtime/','*views/','*tests/'],
         ]
     ],
 
@@ -49,10 +49,29 @@ For checking whole list of files that will be processed, run
 ./yii codestat/default/list-files
 ```
 
-For statistic output run
+For statistic summary output run
 ```
 ./yii codestat
 ```
+
+For statistic summary output with show bad resolved files
+```
+./yii codestat 1
+```
+
+Show full phploc report per each defined group
+
+```
+./yii codestat/default/advanced 
+./yii codestat/default/advanced WebControllers
+```
+
+Show full phploc report for all matched files
+
+```
+./yii codestat/default/common
+```
+
 
 Advanced Usage
 --------------
@@ -65,7 +84,7 @@ You can extend or overwrite property 'groupRules', with supported formats
 or
 ```
 'Group Name' => function(\ReflectionClass $reflection){
-                     //Should return true if class valid for this group, otherwise false;
+       //Should return true if class valid for this group, otherwise false;
                 }
 ```
 Final example
