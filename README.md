@@ -17,12 +17,12 @@ Installation
 Either run
 
 ```
-composer require -dev insolita/yii2-codestat:~1.0.0
+composer require -dev insolita/yii2-codestat:~1.0.1
 ```
 or add
 
 ```
-"insolita/yii2-codestat": "~1.0.0"
+"insolita/yii2-codestat": "~1.0.1"
 ```
 in require-dev section of your `composer.json` file.
 
@@ -36,7 +36,7 @@ php
 'modules'=>[
  ....
         'codestat'=>[
-            'class'=>CodeStatModule::class,
+            'class'=>\insolita\codestat\CodeStatModule::class,
             'scanTargets' => ['@backend/','@common/','@frontend/','@console/'],
             'exceptTargets' => ['*config*','vendor*','*web/*','*runtime/*','*views/*','*tests/*'],
         ]
@@ -78,7 +78,7 @@ php
 'modules'=>[
  ....
         'codestat'=>[
-            'class'=>CodeStatModule::class,
+            'class'=>\insolita\codestat\CodeStatModule::class,
              'groupRules' => [
                                 'Jobs' => 'yii\queue\JobInterface',
                                 'Handlers' => 'trntv\bus\interfaces\Handler::class',
