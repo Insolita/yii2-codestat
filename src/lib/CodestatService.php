@@ -317,10 +317,13 @@ class CodestatService implements CodestatServiceInterface
     private function calcPercentMetric(array &$result, $key):string
     {
         $value = $result[$key];
+        if (is_float($value)) {
+            $value = round($value, 2);
+        }
         if (isset(self::$percentMetrics[$key])) {
             $delimiter = ArrayHelper::getValue($result, self::$percentMetrics[$key], 0);
             $percent = $delimiter > 0 ? round(($result[$key] / $delimiter) * 100, 2) : 0;
-            return $value . ' ' . $percent . '%';
+            return $value . ' [' . $percent . '%]';
         }
         return $value;
     }

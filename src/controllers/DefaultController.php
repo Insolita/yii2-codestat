@@ -170,7 +170,7 @@ class DefaultController extends Controller
      */
     public function actionListMetrics()
     {
-        Output::arrayList(CodestatService::$metricNames);
+        Output::arrayList(array_flip(CodestatService::$metricNames));
         Output::separator();
     }
     
