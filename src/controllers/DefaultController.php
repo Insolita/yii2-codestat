@@ -14,6 +14,7 @@ use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\Console;
 use yii\helpers\FileHelper;
+use function array_flip;
 use function count;
 use function file_exists;
 
@@ -179,8 +180,7 @@ class DefaultController extends Controller
     {
         foreach (CodestatService::$metricNames as $group =>$data)
         {
-            $printData = array_flip($data);
-            $printData[$group] = 'Group';
+            $printData = array_merge([$group => 'Group'], array_flip($data));
             $this->printMetricData($printData);
             Output::separator();
         }
