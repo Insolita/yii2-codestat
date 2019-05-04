@@ -5,15 +5,15 @@
 
 namespace insolita\codestat\lib;
 
-use function count;
-use function in_array;
 use insolita\codestat\lib\collection\Group;
 use insolita\codestat\lib\collection\GroupCollection;
 use insolita\codestat\lib\contracts\ClassDetectorInterface;
 use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use ReflectionClass;
 use SebastianBergmann\PHPLOC\Analyser;
-
+use yii\helpers\ArrayHelper;
+use function count;
+use function in_array;
 
 class CodestatService implements CodestatServiceInterface
 {
@@ -27,6 +27,87 @@ class CodestatService implements CodestatServiceInterface
      * @var \insolita\codestat\lib\contracts\ClassDetectorInterface
      */
     private $classDetector;
+
+    private static $percentMetrics = [
+        'cloc'=>'loc',
+        'ncloc'=>'loc',
+        'lloc'=>'loc',
+        'llocClasses'=>'lloc',
+        'llocFunctions'=>'lloc',
+        'llocGlobal'=>'lloc',
+        'globalConstantAccesses'=>'globalAccesses',
+        'globalVariableAccesses'=>'globalAccesses',
+        'superGlobalVariableAccesses'=>'globalAccesses',
+        'instanceAttributeAccesses'=>'attributeAccesses',
+        'staticAttributeAccesses'=>'attributeAccesses',
+        'instanceMethodCalls'=>'methodCalls',
+        'staticMethodCalls'=>'methodCalls',
+        'abstractClasses'=>'classes',
+        'concreteClasses'=>'classes',
+        'nonStaticMethods'=>'methods',
+        'staticMethods'=>'methods',
+        'publicMethods'=>'methods',
+        'nonPublicMethods'=>'methods',
+        'namedFunctions'=>'functions',
+        'anonymousFunctions'=>'functions',
+        'globalConstants'=>'constants',
+        'classConstants'=>'constants',
+
+    ];
+    public static $metricNames = [
+        'directories'                 =>  'Directories',
+        'files'                       => 'Files',
+        'loc'                         => 'Lines of Code (loc) ',
+        'cloc'                        =>  'Comment Lines of Code (cloc)',
+        'ncloc'                       =>  'Non-Comment Lines of Code (ncloc)',
+        'lloc'                        =>  'Logical Lines of Code (lloc)',
+        'llocClasses'                 =>  'Classes',
+        'classLlocAvg'                =>  'Average Class Length',
+        'classLlocMin'                =>  'Minimum Class Length',
+        'classLlocMax'                =>  'Maximum Class Length',
+        'methodLlocAvg'               =>  'Average Method Length',
+        'methodLlocMin'               =>  'Minimum Method Length',
+        'methodLlocMax'               =>  'Maximum Method Length',
+        'llocFunctions'               =>  'Functions',
+        'llocByNof'                   =>  'Average Function Length',
+        'llocGlobal'                  =>  'Not in classes or functions',
+        'ccnByLloc'                   =>  'Average Complexity per LLOC',
+        'classCcnAvg'                 =>  'Average Complexity per Class',
+        'classCcnMin'                 =>  'Minimum Class Complexity',
+        'classCcnMax'                 =>  'Maximum Class Complexity',
+        'methodCcnAvg'                =>  'Average Complexity per Method',
+        'methodCcnMin'                =>  'Minimum Method Complexity',
+        'methodCcnMax'                =>  'Maximum Method Complexity',
+        'globalAccesses'              =>  'Global Accesses',
+        'globalConstantAccesses'      =>  'Global Constants',
+        'globalVariableAccesses'      =>  'Global Variables',
+        'superGlobalVariableAccesses' =>  'Super-Global Variables',
+        'attributeAccesses'           =>  'Attribute Accesses',
+        'instanceAttributeAccesses'   =>  'Non-Static Attribute Accesses',
+        'staticAttributeAccesses'     =>  'Static Attribute Accesses',
+        'methodCalls'                 =>  'Method Calls',
+        'instanceMethodCalls'         =>  'Non-Static Method Calls',
+        'staticMethodCalls'           =>  'Static Method Calls',
+        'namespaces'                  =>  'Namespaces',
+        'interfaces'                  =>  'Interfaces',
+        'traits'                      =>  'Traits',
+        'classes'                     =>  'Classes',
+        'abstractClasses'             =>  'Abstract Classes',
+        'concreteClasses'             =>  'Concrete Classes',
+        'methods'                     =>  'Methods',
+        'nonStaticMethods'            => 'Non-Static Methods',
+        'staticMethods'               =>  'Static Methods',
+        'publicMethods'               =>  'Public Methods',
+        'nonPublicMethods'            =>  'Non-Public Methods',
+        'functions'                   =>  'Functions',
+        'namedFunctions'              =>  'Named Functions',
+        'anonymousFunctions'          => 'Anonymous Functions',
+        'constants'                   =>  'Constants',
+        'classConstants'              => 'Class Constants',
+        'globalConstants'             =>  'Global Constants',
+        'testClasses'                 => 'Test Classes',
+        'testMethods'                 =>  'Test Methods',
+    ];
     
     public function __construct(ClassDetectorInterface $classDetector, GroupCollection $groups)
     {
@@ -65,7 +146,7 @@ class CodestatService implements CodestatServiceInterface
      * @return array
      * @see \insolita\codestat\CodeStatModule::$groupRules
      */
-    public function makeAdvancedStatistic(array $files, array $metrics=[]):array
+    public function makeAdvancedStatistic(array $files, array $metrics = []):array
     {
         foreach ($this->reflectionGenerator($this->classGenerator($files)) as $reflection) {
             $this->groups->fill($reflection);
@@ -75,12 +156,14 @@ class CodestatService implements CodestatServiceInterface
             if ($group->getNumberOfClasses() === 0) {
                 continue;
             }
-            $result = (new Analyser())->countFiles($group->getFiles(), false);
-            foreach ($result as $key =>$value){
-                if(!empty($metrics) && !in_array($key, $metrics, true)){
+            $result = (new Analyser())->countFiles($group->getFiles(), true);
+            foreach (static::$metricNames as $key => $label) {
+                if (!empty($metrics) && !in_array($key, $metrics, true)) {
                     continue;
                 }
-                $statistic[$group->getName()][] = ['Metric'=>$key, 'Value'=>$value];
+                $value = $this->calcPercentMetric($result, $key);
+                //$statistic[$group->getName()][] = ['Metric'=>$label, 'Value'=>$value];
+                $statistic[$group->getName()][] = [$label => $value];
             }
             unset($result);
         }
@@ -93,15 +176,17 @@ class CodestatService implements CodestatServiceInterface
      * @param array $metrics
      * @return array
      */
-    public function makeCommonStatistic(array $files, array $metrics=[]):array
+    public function makeCommonStatistic(array $files, array $metrics = []):array
     {
         $statistic = [];
-        $result = (new Analyser())->countFiles($files, false);
-        foreach ($result as $key =>$value){
-            if(!empty($metrics) && !in_array($key, $metrics, true)){
+        $result = (new Analyser())->countFiles($files, true);
+        foreach (static::$metricNames as $key => $label) {
+            if (!empty($metrics) && !in_array($key, $metrics, true)) {
                 continue;
             }
-            $statistic[] = ['Metric'=>$key, 'Value'=>$value];
+            $value = $this->calcPercentMetric($result, $key);
+            // $statistic[] = ['Metric'=>$key, 'Value'=>$value];
+            $statistic[] = [$label => $value];
         }
         return $statistic;
     }
@@ -150,8 +235,8 @@ class CodestatService implements CodestatServiceInterface
     {
         foreach ($files as $filePath) {
             $className = $this->classDetector->resolveClassName($filePath);
-            if (is_null($className)) {
-                $this->nonClasses += 1;
+            if ($className === null) {
+                ++$this->nonClasses;
             } else {
                 yield $className;
             }
@@ -220,5 +305,21 @@ class CodestatService implements CodestatServiceInterface
                 'Complexity',
                 'Class/Complexity avg',
             ], 0);
+    }
+
+    /**
+     * @param array $result
+     * @param       $key
+     * @return string
+     */
+    private function calcPercentMetric(array &$result, $key):string
+    {
+        $value = $result[$key];
+        if (isset(self::$percentMetrics[$key])) {
+            $delimiter = ArrayHelper::getValue($result, self::$percentMetrics[$key], 0);
+            $percent = $delimiter > 0 ? round(($result[$key] / $delimiter) * 100, 2) : 0;
+            return $value . ' ' . $percent . '%';
+        }
+        return $value;
     }
 }

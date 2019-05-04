@@ -5,15 +5,16 @@
 
 namespace insolita\codestat\controllers;
 
-use function count;
-use function file_exists;
 use insolita\codestat\CodeStatModule;
 use insolita\codestat\helpers\Output;
+use insolita\codestat\lib\CodestatService;
 use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\helpers\FileHelper;
+use function count;
+use function file_exists;
 
 class DefaultController extends Controller
 {
@@ -89,7 +90,8 @@ class DefaultController extends Controller
 
         foreach ($statistic as $group =>$data){
             $this->headline($group, 'lightYellow');
-            $this->climate->table($data);
+            //$this->climate->table($data);
+            Output::arrayList($data);
             if(!$this->confirm('Show next group?')){
                 break;
             }
@@ -106,7 +108,8 @@ class DefaultController extends Controller
         $service = $this->module->statService;
         $statistic = $service->makeCommonStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->climate->table($statistic);
+        //$this->climate->table($statistic);
+        Output::arrayList($statistic);
         return ExitCode::OK;
     }
 
@@ -129,7 +132,8 @@ class DefaultController extends Controller
             'recursive' => true,
         ]), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->climate->table($statistic);
+        //$this->climate->table($statistic);
+        Output::arrayList($statistic);
         return ExitCode::OK;
     }
 
@@ -148,7 +152,8 @@ class DefaultController extends Controller
         }
         $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->climate->table($statistic);
+        //$this->climate->table($statistic);
+        Output::arrayList($statistic);
         return ExitCode::OK;
     }
 
@@ -162,6 +167,15 @@ class DefaultController extends Controller
         Output::arrayList($files);
         Output::separator();
         Output::info('Total: ' . count($files));
+    }
+
+    /**
+     * Show available metrics
+     */
+    public function actionListMetrics()
+    {
+        Output::arrayList(CodestatService::$metricNames);
+        Output::separator();
     }
     
     protected function colorize(array $summary)
