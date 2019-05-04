@@ -55,58 +55,68 @@ class CodestatService implements CodestatServiceInterface
 
     ];
     public static $metricNames = [
-        'directories'                 =>  'Directories',
-        'files'                       => 'Files',
-        'loc'                         => 'Lines of Code (loc) ',
-        'cloc'                        =>  'Comment Lines of Code (cloc)',
-        'ncloc'                       =>  'Non-Comment Lines of Code (ncloc)',
-        'lloc'                        =>  'Logical Lines of Code (lloc)',
-        'llocClasses'                 =>  'Classes',
-        'classLlocAvg'                =>  'Average Class Length',
-        'classLlocMin'                =>  'Minimum Class Length',
-        'classLlocMax'                =>  'Maximum Class Length',
-        'methodLlocAvg'               =>  'Average Method Length',
-        'methodLlocMin'               =>  'Minimum Method Length',
-        'methodLlocMax'               =>  'Maximum Method Length',
-        'llocFunctions'               =>  'Functions',
-        'llocByNof'                   =>  'Average Function Length',
-        'llocGlobal'                  =>  'Not in classes or functions',
-        'ccnByLloc'                   =>  'Average Complexity per LLOC',
-        'classCcnAvg'                 =>  'Average Complexity per Class',
-        'classCcnMin'                 =>  'Minimum Class Complexity',
-        'classCcnMax'                 =>  'Maximum Class Complexity',
-        'methodCcnAvg'                =>  'Average Complexity per Method',
-        'methodCcnMin'                =>  'Minimum Method Complexity',
-        'methodCcnMax'                =>  'Maximum Method Complexity',
-        'globalAccesses'              =>  'Global Accesses',
-        'globalConstantAccesses'      =>  'Global Constants',
-        'globalVariableAccesses'      =>  'Global Variables',
-        'superGlobalVariableAccesses' =>  'Super-Global Variables',
-        'attributeAccesses'           =>  'Attribute Accesses',
-        'instanceAttributeAccesses'   =>  'Non-Static Attribute Accesses',
-        'staticAttributeAccesses'     =>  'Static Attribute Accesses',
-        'methodCalls'                 =>  'Method Calls',
-        'instanceMethodCalls'         =>  'Non-Static Method Calls',
-        'staticMethodCalls'           =>  'Static Method Calls',
-        'namespaces'                  =>  'Namespaces',
-        'interfaces'                  =>  'Interfaces',
-        'traits'                      =>  'Traits',
-        'classes'                     =>  'Classes',
-        'abstractClasses'             =>  'Abstract Classes',
-        'concreteClasses'             =>  'Concrete Classes',
-        'methods'                     =>  'Methods',
-        'nonStaticMethods'            => 'Non-Static Methods',
-        'staticMethods'               =>  'Static Methods',
-        'publicMethods'               =>  'Public Methods',
-        'nonPublicMethods'            =>  'Non-Public Methods',
-        'functions'                   =>  'Functions',
-        'namedFunctions'              =>  'Named Functions',
-        'anonymousFunctions'          => 'Anonymous Functions',
-        'constants'                   =>  'Constants',
-        'classConstants'              => 'Class Constants',
-        'globalConstants'             =>  'Global Constants',
-        'testClasses'                 => 'Test Classes',
-        'testMethods'                 =>  'Test Methods',
+        'Common' => [
+            'directories' => 'Directories',
+            'files' => 'Files',
+        ],
+        'Size' => [
+            'loc' => 'Lines of Code (loc)',
+            'cloc' => 'Comment Lines of Code (cloc)',
+            'ncloc' => 'Non-Comment Lines of Code (ncloc)',
+            'lloc' => 'Logical Lines of Code (lloc)',
+            'llocClasses' => 'Classes',
+            'classLlocAvg' => 'Average Class Length',
+            'classLlocMin' => 'Minimum Class Length',
+            'classLlocMax' => 'Maximum Class Length',
+            'methodLlocAvg' => 'Average Method Length',
+            'methodLlocMin' => 'Minimum Method Length',
+            'methodLlocMax' => 'Maximum Method Length',
+            'llocFunctions' => 'Functions',
+            'llocByNof' => 'Average Function Length',
+            'llocGlobal' => 'Not in classes or functions',
+        ],
+        'Cyclomatic Complexity' => [
+            'ccnByLloc' => 'Average Complexity per LLOC',
+            'classCcnAvg' => 'Average Complexity per Class',
+            'classCcnMin' => 'Minimum Class Complexity',
+            'classCcnMax' => 'Maximum Class Complexity',
+            'methodCcnAvg' => 'Average Complexity per Method',
+            'methodCcnMin' => 'Minimum Method Complexity',
+            'methodCcnMax' => 'Maximum Method Complexity',
+        ],
+        'Dependencies' => [
+            'globalAccesses' => 'Global Accesses',
+            'globalConstantAccesses' => 'Global Constants',
+            'globalVariableAccesses' => 'Global Variables',
+            'superGlobalVariableAccesses' => 'Super-Global Variables',
+            'attributeAccesses' => 'Attribute Accesses',
+            'instanceAttributeAccesses' => 'Non-Static Attribute Accesses',
+            'staticAttributeAccesses' => 'Static Attribute Accesses',
+            'methodCalls' => 'Method Calls',
+            'instanceMethodCalls' => 'Non-Static Method Calls',
+            'staticMethodCalls' => 'Static Method Calls',
+        ],
+        'Structure' => [
+            'namespaces' => 'Namespaces',
+            'interfaces' => 'Interfaces',
+            'traits' => 'Traits',
+            'classes' => 'Classes',
+            'abstractClasses' => 'Abstract Classes',
+            'concreteClasses' => 'Concrete Classes',
+            'methods' => 'Methods',
+            'nonStaticMethods' => 'Non-Static Methods',
+            'staticMethods' => 'Static Methods',
+            'publicMethods' => 'Public Methods',
+            'nonPublicMethods' => 'Non-Public Methods',
+            'functions' => 'Functions',
+            'namedFunctions' => 'Named Functions',
+            'anonymousFunctions' => 'Anonymous Functions',
+            'constants' => 'Constants',
+            'classConstants' => 'Class Constants',
+            'globalConstants' => 'Global Constants',
+            'testClasses' => 'Test Classes',
+            'testMethods' => 'Test Methods',
+        ],
     ];
     
     public function __construct(ClassDetectorInterface $classDetector, GroupCollection $groups)
@@ -157,12 +167,15 @@ class CodestatService implements CodestatServiceInterface
                 continue;
             }
             $result = (new Analyser())->countFiles($group->getFiles(), true);
-            foreach (static::$metricNames as $key => $label) {
-                if (!empty($metrics) && !in_array($key, $metrics, true)) {
-                    continue;
+            foreach (static::$metricNames as $groupName => $data) {
+                $statistic[$group->getName()][$groupName] = 'Group';
+                foreach ($data as $key => $label) {
+                    if (!empty($metrics) && !in_array($key, $metrics, true)) {
+                        continue;
+                    }
+                    $value = $this->calcPercentMetric($result, $key);
+                    $statistic[$group->getName()][$label] = $value;
                 }
-                $value = $this->calcPercentMetric($result, $key);
-                $statistic[$group->getName()][$label] = $value;
             }
             unset($result);
         }
@@ -179,12 +192,15 @@ class CodestatService implements CodestatServiceInterface
     {
         $statistic = [];
         $result = (new Analyser())->countFiles($files, true);
-        foreach (static::$metricNames as $key => $label) {
-            if (!empty($metrics) && !in_array($key, $metrics, true)) {
-                continue;
+        foreach (static::$metricNames as $groupName => $data) {
+            $statistic[$groupName] = 'Group';
+            foreach ($data as $key => $label) {
+                if (!empty($metrics) && !in_array($key, $metrics, true)) {
+                    continue;
+                }
+                $value = $this->calcPercentMetric($result, $key);
+                $statistic[$label] = $value;
             }
-            $value = $this->calcPercentMetric($result, $key);
-            $statistic[$label] = $value;
         }
         return $statistic;
     }

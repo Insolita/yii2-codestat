@@ -12,6 +12,7 @@ use League\CLImate\CLImate;
 use yii\base\Module;
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\helpers\Console;
 use yii\helpers\FileHelper;
 use function count;
 use function file_exists;
@@ -27,7 +28,15 @@ class DefaultController extends Controller
     public $color = true;
     
     protected $climate;
-    
+
+    private static $metricGroups = [
+        'Common'=> Console::FG_GREEN,
+        'Size'=> Console::FG_YELLOW,
+        'Cyclomatic Complexity'=> Console::FG_PURPLE,
+        'Dependencies'=> Console::FG_CYAN,
+        'Structure'=> Console::FG_BLUE,
+    ];
+
     public function __construct($id, Module $module, CLImate $CLImate, array $config = [])
     {
         $this->climate = $CLImate;
@@ -78,20 +87,18 @@ class DefaultController extends Controller
         $statistic = $service->makeAdvancedStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
 
-        if($groupName !==null){
-            if(!isset($statistic[$groupName])){
-                $this->stderr('Undefined group '.$groupName);
-                return ExitCode::DATAERR;
-            }
-            $this->headline($groupName, 'lightYellow');
-            Output::arrayList($statistic[$groupName]);
-            return ExitCode::OK;
+        if ($groupName !== null && !isset($statistic[$groupName])) {
+            $this->stderr('Undefined group ' . $groupName);
+            return ExitCode::DATAERR;
         }
 
-        foreach ($statistic as $group =>$data){
+        foreach ($statistic as $group => $data) {
+            if ($groupName !== null && $groupName !== $group) {
+                continue;
+            }
             $this->headline($group, 'lightYellow');
-            Output::arrayList($data);
-            if(!$this->confirm('Show next group?')){
+            $this->printMetricData($data);
+            if ($groupName === null && !$this->confirm('Show next group?')) {
                 break;
             }
         }
@@ -107,7 +114,7 @@ class DefaultController extends Controller
         $service = $this->module->statService;
         $statistic = $service->makeCommonStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        Output::arrayList($statistic);
+        $this->printMetricData($statistic);
         return ExitCode::OK;
     }
 
@@ -130,7 +137,7 @@ class DefaultController extends Controller
             'recursive' => true,
         ]), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        Output::arrayList($statistic);
+        $this->printMetricData($statistic);
         return ExitCode::OK;
     }
 
@@ -149,7 +156,7 @@ class DefaultController extends Controller
         }
         $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        Output::arrayList($statistic);
+        $this->printMetricData($statistic);
         return ExitCode::OK;
     }
 
@@ -170,8 +177,13 @@ class DefaultController extends Controller
      */
     public function actionListMetrics()
     {
-        Output::arrayList(array_flip(CodestatService::$metricNames));
-        Output::separator();
+        foreach (CodestatService::$metricNames as $group =>$data)
+        {
+            $printData = array_flip($data);
+            $printData[$group] = 'Group';
+            $this->printMetricData($printData);
+            Output::separator();
+        }
     }
     
     protected function colorize(array $summary)
@@ -191,14 +203,31 @@ class DefaultController extends Controller
         }
         return $colorized;
     }
-    
-    protected function wrap($string, $color)
+
+    protected function wrap($string, $color):string
     {
         return "<bold><$color>$string</$color></bold>";
     }
-    
-    protected function headline($string, $color)
+
+    protected function headline($string, $color):string
     {
         $this->climate->green()->border('=', 110)->$color()->tab(4)->out($string);
+    }
+
+    /**
+     * @param $data
+     */
+    private function printMetricData($data):void
+    {
+        foreach ($data as $index => $line) {
+            if ($line === 'Group') {
+                $this->stdout($index, self::$metricGroups[$index], Console::BOLD);
+                $this->stdout(PHP_EOL);
+                Output::separator();
+                continue;
+            }
+            $this->stdout(' ' . $index . '  ', Console::BOLD);
+            $this->stdout($line . PHP_EOL);
+        }
     }
 }

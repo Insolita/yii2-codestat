@@ -9,6 +9,10 @@ use yii\helpers\BaseConsole;
 
 class Output extends BaseConsole
 {
+    /**
+     * @param array $data
+     * @param bool  $withIndex
+     */
     public static function arrayList(array $data, $withIndex = true)
     {
         foreach ($data as $index => $line) {
