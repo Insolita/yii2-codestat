@@ -5,7 +5,6 @@
 
 namespace insolita\codestat;
 
-use function array_merge;
 use Exception;
 use insolita\codestat\lib\classdetect\TokenizerDetector;
 use insolita\codestat\lib\CodestatService;
@@ -14,13 +13,13 @@ use insolita\codestat\lib\contracts\ClassDetectorInterface;
 use insolita\codestat\lib\contracts\CodestatServiceInterface;
 use Yii;
 use yii\base\Action;
+use yii\base\BaseObject;
 use yii\base\Behavior;
 use yii\base\Component;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\base\Module;
-use yii\base\BaseObject;
 use yii\base\Widget;
 use yii\console\Controller as ConsoleController;
 use yii\db\ActiveQuery;
@@ -30,6 +29,7 @@ use yii\helpers\FileHelper;
 use yii\rest\Controller as RestController;
 use yii\web\AssetBundle;
 use yii\web\Controller as WebController;
+use function array_merge;
 
 class CodeStatModule extends Module
 {
@@ -47,7 +47,7 @@ class CodeStatModule extends Module
      * @see \yii\helpers\FileHelper::findFiles() 'except' doc
      * @var array
      */
-    public $exceptTargets= [
+    public $exceptTargets = [
             'config*',
             'vendor*',
             '*web/*',
@@ -86,7 +86,7 @@ class CodeStatModule extends Module
      * List of phploc metrics showed for advanced, common, directory and file actions, by default all available metrics
      * will be showed
      * @var array
-    */
+     */
     public $metrics = [];
 
     public function init()
