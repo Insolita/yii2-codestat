@@ -84,6 +84,11 @@ Show full phploc report for custom file
 ./yii codestat/default/file @common/lib/MySuperClass.php
 ```
 
+List available metrics with codes
+```
+./yii codestat/default/list-metrics
+```
+
 Advanced Usage
 --------------
 
