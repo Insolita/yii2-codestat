@@ -186,7 +186,7 @@ class DefaultController extends Controller
         }
     }
     
-    protected function colorize(array $summary)
+    protected function colorize(array $summary):array
     {
         $colorized = [];
         foreach ($summary as $i => $row) {
@@ -209,7 +209,7 @@ class DefaultController extends Controller
         return "<bold><$color>$string</$color></bold>";
     }
 
-    protected function headline($string, $color):string
+    protected function headline($string, $color):void
     {
         $this->climate->green()->border('=', 110)->$color()->tab(4)->out($string);
     }
