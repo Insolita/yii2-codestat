@@ -99,7 +99,7 @@ class DefaultController extends Controller
             }
             $this->headline($group, 'lightYellow');
             $this->printMetricData($data);
-            if ($groupName === null && !$this->confirm('Show next group?')) {
+            if ($groupName === null && !$this->confirm('Show next group?', true)) {
                 break;
             }
         }
