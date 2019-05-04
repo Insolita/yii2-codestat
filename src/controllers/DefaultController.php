@@ -111,7 +111,7 @@ class DefaultController extends Controller
         $service = $this->module->statService;
         $statistic = $service->makeCommonStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->printMetricData($statistic);
+        $this->printMetricData($statistic, !empty($this->module->metrics));
         return ExitCode::OK;
     }
 
@@ -134,7 +134,7 @@ class DefaultController extends Controller
             'recursive' => true,
         ]), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->printMetricData($statistic);
+        $this->printMetricData($statistic, !empty($this->module->metrics));
         return ExitCode::OK;
     }
 
@@ -153,7 +153,7 @@ class DefaultController extends Controller
         }
         $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        $this->printMetricData($statistic);
+        $this->printMetricData($statistic, !empty($this->module->metrics));
         return ExitCode::OK;
     }
 
@@ -211,12 +211,16 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param $data
+     * @param      $data
+     * @param bool $skipHeaders
      */
-    private function printMetricData($data):void
+    private function printMetricData($data, bool $skipHeaders = false):void
     {
         foreach ($data as $index => $line) {
             if ($line === 'Group') {
+                if($skipHeaders === true){
+                    continue;
+                }
                 $this->stdout($index, self::$metricGroups[$index], Console::BOLD);
                 $this->stdout(PHP_EOL);
                 Output::separator();
