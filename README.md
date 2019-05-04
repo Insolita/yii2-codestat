@@ -64,6 +64,7 @@ Show full phploc report per each defined group
 ```
 ./yii codestat/default/advanced 
 ./yii codestat/default/advanced WebControllers
+./yii codestat/default/advanced WebControllers,RestControllers,ConsoleControllers
 ```
 
 Show full phploc report for all matched files
