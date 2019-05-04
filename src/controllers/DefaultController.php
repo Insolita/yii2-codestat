@@ -66,12 +66,12 @@ class DefaultController extends Controller
         $this->climate->table($summary);
 
         if($showErrors !== true){
-           return ExitCode::OK;
+            return ExitCode::OK;
         }
         $this->headline('Failed for resolve', 'lightYellow');
         if(!count($service->errorList())){
             $this->climate->info('Errors not found');
-        }else{
+        } else{
             Output::arrayList($service->errorList());
         }
         return ExitCode::OK;
@@ -128,8 +128,8 @@ class DefaultController extends Controller
     {
         $service = $this->module->statService;
         $dir = \Yii::getAlias($dir);
-        if(!is_dir($dir)){
-            $this->stderr('Directory not found by path '.$dir);
+        if (!is_dir($dir)) {
+            $this->stderr('Directory not found by path ' . $dir);
             return ExitCode::UNSPECIFIED_ERROR;
         }
         $statistic = $service->makeCommonStatistic(FileHelper::findFiles($dir, [
@@ -151,8 +151,8 @@ class DefaultController extends Controller
     {
         $service = $this->module->statService;
         $filePath = \Yii::getAlias($filePath);
-        if(!file_exists($filePath)){
-            $this->stderr('File not found by path '.$filePath);
+        if (!file_exists($filePath)) {
+            $this->stderr('File not found by path ' . $filePath);
             return ExitCode::UNSPECIFIED_ERROR;
         }
         $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
@@ -198,7 +198,7 @@ class DefaultController extends Controller
                     $value = $this->wrap($value, 'light_cyan');
                 }
                 $key = $this->wrap($key, 'green');
-                $colorized[$i][$key] = (string)$value;
+                $colorized[$i][$key] = (string) $value;
             }
         }
         return $colorized;
