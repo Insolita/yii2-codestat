@@ -79,27 +79,23 @@ class DefaultController extends Controller
 
     /**
      *  Return full phploc statistic per each defined group
-     * @param string|null $groupName
+     * @param array $groupNames
      * @return int
      */
-    public function actionAdvanced(?string $groupName = null):int
+    public function actionAdvanced(array $groupNames = []):int
     {
         $service = $this->module->statService;
         $statistic = $service->makeAdvancedStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
 
-        if ($groupName !== null && !isset($statistic[$groupName])) {
-            $this->stderr('Undefined group ' . $groupName);
-            return ExitCode::DATAERR;
-        }
 
         foreach ($statistic as $group => $data) {
-            if ($groupName !== null && $groupName !== $group) {
+            if (!empty($groupNames) && !in_array($group, $groupNames, true)) {
                 continue;
             }
             $this->headline($group, 'lightYellow');
             $this->printMetricData($data);
-            if ($groupName === null && !$this->confirm('Show next group?', true)) {
+            if (empty($groupNames) && !$this->confirm('Show next group?', true)) {
                 break;
             }
         }
