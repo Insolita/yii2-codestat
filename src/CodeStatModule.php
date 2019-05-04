@@ -115,6 +115,9 @@ class CodeStatModule extends Module
         if (!(is_array($this->groupRules) || $this->groupRules instanceof GroupCollection)) {
             throw new InvalidConfigException('groupRules must be array or instance of GroupCollection');
         }
+        if (!is_array($this->metrics)) {
+            $this->metrics = [];
+        }
     }
     
     public static function defaultRules()
