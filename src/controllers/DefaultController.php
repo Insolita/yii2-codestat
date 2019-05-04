@@ -65,13 +65,13 @@ class DefaultController extends Controller
         $this->headline('YII-2 Code Statistic', 'lightYellow');
         $this->climate->table($summary);
 
-        if($showErrors !== true){
+        if ($showErrors !== true) {
             return ExitCode::OK;
         }
         $this->headline('Failed for resolve', 'lightYellow');
-        if(!count($service->errorList())){
+        if (!count($service->errorList())) {
             $this->climate->info('Errors not found');
-        } else{
+        } else {
             Output::arrayList($service->errorList());
         }
         return ExitCode::OK;
@@ -218,7 +218,7 @@ class DefaultController extends Controller
     {
         foreach ($data as $index => $line) {
             if ($line === 'Group') {
-                if($skipHeaders === true){
+                if ($skipHeaders === true) {
                     continue;
                 }
                 $this->stdout($index, self::$metricGroups[$index], Console::BOLD);
