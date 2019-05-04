@@ -162,8 +162,7 @@ class CodestatService implements CodestatServiceInterface
                     continue;
                 }
                 $value = $this->calcPercentMetric($result, $key);
-                //$statistic[$group->getName()][] = ['Metric'=>$label, 'Value'=>$value];
-                $statistic[$group->getName()][] = [$label => $value];
+                $statistic[$group->getName()][$label] = $value;
             }
             unset($result);
         }
@@ -185,8 +184,7 @@ class CodestatService implements CodestatServiceInterface
                 continue;
             }
             $value = $this->calcPercentMetric($result, $key);
-            // $statistic[] = ['Metric'=>$key, 'Value'=>$value];
-            $statistic[] = [$label => $value];
+            $statistic[$label] = $value;
         }
         return $statistic;
     }

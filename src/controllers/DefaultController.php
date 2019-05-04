@@ -84,13 +84,12 @@ class DefaultController extends Controller
                 return ExitCode::DATAERR;
             }
             $this->headline($groupName, 'lightYellow');
-            $this->climate->table($statistic[$groupName]);
+            Output::arrayList($statistic[$groupName]);
             return ExitCode::OK;
         }
 
         foreach ($statistic as $group =>$data){
             $this->headline($group, 'lightYellow');
-            //$this->climate->table($data);
             Output::arrayList($data);
             if(!$this->confirm('Show next group?')){
                 break;
@@ -108,7 +107,6 @@ class DefaultController extends Controller
         $service = $this->module->statService;
         $statistic = $service->makeCommonStatistic($this->module->prepareFiles(), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        //$this->climate->table($statistic);
         Output::arrayList($statistic);
         return ExitCode::OK;
     }
@@ -132,7 +130,6 @@ class DefaultController extends Controller
             'recursive' => true,
         ]), $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        //$this->climate->table($statistic);
         Output::arrayList($statistic);
         return ExitCode::OK;
     }
@@ -152,7 +149,6 @@ class DefaultController extends Controller
         }
         $statistic = $service->makeCommonStatistic([$filePath], $this->module->metrics);
         $this->headline('YII-2 Code Statistic', 'green');
-        //$this->climate->table($statistic);
         Output::arrayList($statistic);
         return ExitCode::OK;
     }
