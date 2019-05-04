@@ -62,7 +62,7 @@ class DefaultController extends Controller
         if(!count($service->errorList())){
             $this->climate->info('Errors not found');
         }else{
-            $this->climate->table($service->errorList());
+            Output::arrayList($service->errorList());
         }
         return ExitCode::OK;
     }

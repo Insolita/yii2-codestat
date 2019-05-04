@@ -234,11 +234,15 @@ class CodestatService implements CodestatServiceInterface
     public function classGenerator(array $files)
     {
         foreach ($files as $filePath) {
-            $className = $this->classDetector->resolveClassName($filePath);
-            if ($className === null) {
-                ++$this->nonClasses;
-            } else {
-                yield $className;
+            try{
+                $className = $this->classDetector->resolveClassName($filePath);
+                if ($className === null) {
+                    ++$this->nonClasses;
+                } else {
+                    yield $className;
+                }
+            }catch (\Throwable $e){
+                $this->withErrors[] = $e->getMessage();
             }
         }
     }
@@ -267,7 +271,7 @@ class CodestatService implements CodestatServiceInterface
                     yield $reflection;
                 }
             } catch (\Throwable $e) {
-                $this->withErrors[] = ['class'=>$class, 'error'=>$e->getMessage()];
+                $this->withErrors[] = $e->getMessage();
             }
         }
     }
