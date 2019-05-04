@@ -309,7 +309,7 @@ class CodestatService implements CodestatServiceInterface
                 ? round($groupMetrics['lloc'] / $groupMetrics['methods'], 2)
                 : 0;
             $summary['Complexity'] = $groupMetrics['ccn'];
-            $summary['Class/Complexity avg'] = round($groupMetrics['classCcnAvg'], 4);
+            $summary['Class/Complexity avg'] = round($groupMetrics['classCcnAvg'], 2);
             return $summary;
         }
 
